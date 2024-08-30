@@ -1,5 +1,5 @@
 ## Put your name here:
 
 
-Trent Seaman
+Trent Seaman,
 Ryan Jordan
