@@ -1,6 +1,7 @@
 ## Put your name here:
 
 
-Trent Seaman
-Ryan Jordan
-Josh Wai       
+Trent Seaman,    
+Ryan Jordan,
+Josh Wai,
+Pulkit Chhabra
