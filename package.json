@@ -1,0 +1,25 @@
+{
+  "name": "team-project-461",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsc",
+    "package:linux": "pkg dist/index.js --targets node18-linux-x64 --output dist/run",
+    "package:win": "pkg dist/index.js --targets node18-win-x64 --output dist/run",
+    "package:macos": "pkg dist/index.js --targets node18-macos-x64 --output dist/run",
+    "test": "cross-env dist/run install && cross-env dist/run.exe test && cross-env dist/run.exe URL_FILE"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.5.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3"
+  }
+}
