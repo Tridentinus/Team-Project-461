@@ -2,6 +2,7 @@
   "name": "team-project-461",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "src/index.js",
   "scripts": {
     "clean": "rimraf dist",
@@ -9,13 +10,16 @@
     "package:linux": "pkg dist/index.js --targets node18-linux-x64 --output dist/run",
     "package:win": "pkg dist/index.js --targets node18-win-x64 --output dist/run",
     "package:macos": "pkg dist/index.js --targets node18-macos-x64 --output dist/run",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "fetch": "node dist/fetch.js",
+    "clean:logs": "node dist/clearLog.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.5.12",
+    "@types/minimist": "^1.2.5",
     "@types/node": "^22.5.2",
     "jest": "^29.7.0",
     "rimraf": "^6.0.1",
@@ -23,6 +27,12 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "fs": "^0.0.1-security",
+    "graphql": "^16.9.0",
+    "graphql-request": "^7.1.0",
+    "minimist": "^1.2.8",
+    "pkg": "^5.8.1"
   }
 }
