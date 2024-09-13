@@ -5,7 +5,6 @@ import * as fs from 'fs';
 dotenv.config(); // Load environment variables
 
 // Global variables
-const endpoint = "https://api.github.com/graphql";  // GraphQL endpoint
 const logFile = process.env.LOG_FILE || 'myLog.log';  // Log file path
 
 /**
@@ -54,7 +53,7 @@ export async function request<TVariables extends object | undefined>(
   } catch (error) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
-    console.error(`Error fetching data: ${errorMessage}`);
+    // console.error(`Error fetching data: ${errorMessage}`);
     return null; // Return null in case of error
   }
 }
@@ -73,7 +72,7 @@ export function getRepoOwnerAndName(repoLink: string): { owner: string, name: st
     const name = match[2];
     return { owner, name };
   } else {
-    console.error("Invalid GitHub repository link.");
+    // console.error("Invalid GitHub repository link.");
     return null;
   }
 }

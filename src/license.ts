@@ -1,5 +1,4 @@
 import { request, getLinkType, getRepoOwnerAndName, getModuleNameFromNpmLink} from "./utils.js";
-import { gql } from 'graphql-request';
 
  /**
  * Fetches repository license using a GraphQL query.
@@ -8,7 +7,7 @@ import { gql } from 'graphql-request';
  * @param token - The GitHub token used for authentication.
  * @returns The name of the license or null in case of an error.
  */
- async function getGitHubLicense(owner: string, name: string, token: string): Promise<string | null> {
+ export async function getGitHubLicense(owner: string, name: string, token: string): Promise<string | null> {
   const endpoint = "https://api.github.com/graphql"
   // specify the GraphQL query to fetch the license information
   const query = `
@@ -26,52 +25,38 @@ import { gql } from 'graphql-request';
       (await request(endpoint, query, variables, token)) as {
         repository?: { licenseInfo?: { spdxId: string } };
       };  // fetch the data using the query
-
   // extract the license information from the fetched data
+
   if (data && data.repository && data.repository.licenseInfo) {
     return data.repository.licenseInfo.spdxId;
-  } else {  // log an error message if the license information could not be fetched
-    console.log(`Could not fetch license information for ${owner}/${name}`);
+  }
+  else {  // log an error message if the license information could not be fetched
+    console.error(`Request failed`);
     return null;
   }
 }
+
 
 /**
  * Fetches the license of an npm module using a GraphQL query.
  * 
- * @param moduleName - The name of the npm module.
- * @param token - The GitHub token used for authentication.
- * @returns A promise that resolves to the license of the npm module, or null if the license information is not found. }
+ * @param packageName - The name of the npm module.
+ * @returns A promise that resolves to the license of the npm module}
 **/
-export async function getNpmModuleLicense(moduleName: string, token: string): Promise<string | null> {
-  console.log('Fetching license for', moduleName);
-  const endpoint = 'https://registry.npmjs.org/-/graphql';
-
-  // GraphQL query to fetch the license for a module
-  const query = gql`
-    query getPackageInfo($name: String!) {
-      package(name: $name) {
-        license
-      }
-    }
-  `;
-
-  try {
-    const variables = { name: moduleName };
-    
-    const data: { package?: { license?: string } } = await request(endpoint, query, variables, token || '') as { package?: { license?: string } };
-    
-    if (data?.package?.license) {
-      return data.package.license;
-    } else {
-      console.log(`License information for ${moduleName} not found.`);
-      return null;
-    }
-  } catch (error) {
-    console.error(`Error fetching license for ${moduleName}: ${error}`);
-    return null;
+export async function getNpmLicense(packageName: string) {
+  const response = await fetch(`https://registry.npmjs.org/${packageName}`);
+  const data = await response.json();
+  
+  // Check if 'license' is an object (it could be a string)
+  if (typeof data.license === 'string') {
+    return data.license; // This will often be the SPDX ID
+  } else if (data.license && data.license.type) {
+    return data.license.type; // Return SPDX ID
   }
+
+  return 'No license information found';
 }
+
 
 /**
  * Checks if a given license is compatible with LGPLv2.1.
@@ -79,7 +64,7 @@ export async function getNpmModuleLicense(moduleName: string, token: string): Pr
  * @param license - The license to check compatibility for.
  * @returns A number indicating the compatibility of the license. Returns 1 if the license is compatible, and 0 if it is not.
  */
-function isLicenseCompatible(license: string): number {
+export function isLicenseCompatible(license: string): number {
   // List of licenses compatible with LGPLv2.1
   const compatibleLicenses = [
     "LGPLv2.1",
@@ -103,37 +88,38 @@ function isLicenseCompatible(license: string): number {
 }
 
 /**
- * Retrieves the license score for a given repository.
+ * Retrieves the license score for a given repository or npm module.
  * 
- * @param owner - The owner of the repository.
- * @param name - The name of the repository.
- * @param token - The GitHub token used for authentication.
- * @returns A promise that resolves to the license score of the repository.
+ * @param url - The URL of the repository or npm module.
+ * @returns A promise that resolves to the license score.
  */
 export async function getLicenseScore(url: string): Promise<number> {
-  // Get the type of the link
   const linkType = getLinkType(url);
-
-  // Get the license of the repository
+  console.log(linkType);
   let license: string | null = null;
-  if (linkType === 'GitHub') {
-    // Extract the owner and name of the repository
-    const { owner, name } = getRepoOwnerAndName(url) ?? { owner: '', name: '' };
-    // Get the license of the repository
-    license = await getGitHubLicense(owner, name, process.env.GITHUB_TOKEN || '');
-  } else if (linkType === 'npm') {
-    // Extract the module name from the npm link
-    const moduleName = getModuleNameFromNpmLink(url) ?? '';
-    // Get the license of the npm module
-    license = await getNpmModuleLicense(moduleName, process.env.NPM_TOKEN || '');
-  }
-  else {
-    console.error("Invalid link type.");
+
+  try {
+    if (linkType === 'GitHub') {
+      const { owner, name } = getRepoOwnerAndName(url) ?? {};
+      if (!owner || !name) {
+        throw new Error('Invalid GitHub repository URL.');
+      }
+      license = await getGitHubLicense(owner, name, process.env.GITHUB_TOKEN || '');
+    } else if (linkType === 'npm') {
+      const moduleName = getModuleNameFromNpmLink(url);
+      if (!moduleName) {
+        throw new Error('Invalid npm module URL.');
+      }
+      license = await getNpmLicense(moduleName);
+    } else {
+      return 0;
+    }
+
+    if (license) {
+      return isLicenseCompatible(license);
+    }
+    return 0;
+  } catch (error) {
     return 0;
   }
-  if (license !== null) {
-    const score = isLicenseCompatible(license);
-    return score;
-  }
-  return 0;
 }
