@@ -41,11 +41,11 @@ export async function fetchRepoData(owner: string, name: string, token: string) 
     const data = await client.request(query, { owner, name });
     logMessage('INFO', `Successfully fetched data for ${owner}/${name}`);
     console.log(JSON.stringify(data, null, 2));
+    return data;
   } catch (error) {
     const errorMessage = (error instanceof Error) ? error.message : 'Unknown error occurred';
     logMessage('ERROR', `Error fetching data: ${errorMessage}`);
     console.error(`Error fetching data: ${errorMessage}`);
   }
 }
-
 

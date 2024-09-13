@@ -12,10 +12,12 @@ const config: Config.InitialOptions = {
     ],
     '^.+\\.js$': 'babel-jest',
   },
+  moduleFileExtensions: ['ts', 'js'],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
   testEnvironment: 'node',
+  testMatch: ['**/*.test.ts'],
 };
 
 export default config;
