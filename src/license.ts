@@ -31,7 +31,6 @@ import { request, getLinkType, getRepoOwnerAndName, getModuleNameFromNpmLink} fr
     return data.repository.licenseInfo.spdxId;
   }
   else {  // log an error message if the license information could not be fetched
-    console.error(`Request failed`);
     return null;
   }
 }
@@ -95,7 +94,6 @@ export function isLicenseCompatible(license: string): number {
  */
 export async function getLicenseScore(url: string): Promise<number> {
   const linkType = getLinkType(url);
-  console.log(linkType);
   let license: string | null = null;
 
   try {

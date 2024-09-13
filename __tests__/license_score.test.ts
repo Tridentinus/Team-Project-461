@@ -12,6 +12,13 @@ describe('getLicenseScore', () => {
   it('should return 1 for a GitHub link with a compatible license', async () => {
     // Mock the helper function results for a GitHub case
     vi.spyOn(utils, 'getLinkType').mockReturnValue('GitHub');
+    vi.spyOn(utils, 'request').mockResolvedValue({
+      repository: {
+        licenseInfo: {
+          spdxId: 'MIT',
+        },
+      },
+    });
     vi.spyOn(utils, 'getRepoOwnerAndName').mockReturnValue({ owner: 'facebook', name: 'react' });
     vi.spyOn(license, 'getGitHubLicense').mockResolvedValue('MIT');
     vi.spyOn(license, 'isLicenseCompatible').mockReturnValue(1);
@@ -26,6 +33,11 @@ describe('getLicenseScore', () => {
   it('should return the 1 for an npm link with a compatible license', async () => {
     // Mock the helper function results for an npm case
     vi.spyOn(utils, 'getLinkType').mockReturnValue('npm');
+    global.fetch = vi.fn().mockResolvedValue({
+      json: vi.fn().mockResolvedValue({
+        license: 'MIT',
+      }),
+    });
     vi.spyOn(utils, 'getModuleNameFromNpmLink').mockReturnValue('react');
     vi.spyOn(license, 'getNpmLicense').mockResolvedValue('MIT');
     vi.spyOn(license, 'isLicenseCompatible').mockReturnValue(1); // Assume 1 means compatible
@@ -40,7 +52,7 @@ describe('getLicenseScore', () => {
   it('should return 0 for an invalid link type', async () => {
     // Mock the helper function to return an invalid link type
     vi.spyOn(utils, 'getLinkType').mockReturnValue('Unknown');
-
+    
     // Call the function
     const score = await getLicenseScore('https://invalid-url.com');
 
