@@ -1,23 +1,24 @@
-import { fetchRepoData } from '../repoData';
+import { describe, it, beforeEach, expect, vi } from 'vitest';
+import { fetchRepoData } from '../src/repoData.js';
 import { GraphQLClient } from 'graphql-request';
+import * as dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 // Mock the GraphQLClient
-jest.mock('graphql-request');
-//use the .env file to get the token
-require('dotenv').config();
+vi.mock('graphql-request');
 
-
-
-test('Repo Data Fetching', () => {
-  const mockClient = GraphQLClient as jest.MockedClass<typeof GraphQLClient>;
+describe('Repo Data Fetching', () => {
+  const mockClient = GraphQLClient as unknown as { new (): { request: vi.Mock } };
 
   beforeEach(() => {
     // Reset the mock before each test
-    mockClient.mockClear();
+    vi.resetAllMocks();
   });
 
   it('should fetch repository data', async () => {
-    const mockRequest = jest.fn();
+    const mockRequest = vi.fn();
     mockClient.prototype.request = mockRequest;
 
     const mockData = {
@@ -28,10 +29,7 @@ test('Repo Data Fetching', () => {
       },
     };
 
-
-
     mockRequest.mockResolvedValueOnce(mockData);
-    //use the .env file to get the token
 
     await fetchRepoData('Tridentinus', 'dummyPackage', process.env.GITHUB_TOKEN || '');
 
