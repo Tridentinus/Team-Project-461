@@ -1,7 +1,10 @@
-import { GraphQLClient } from 'graphql-request';
+import { GraphQLClient } from 'graphql-request'; 
 import dotenv from 'dotenv';
 import * as fs from 'fs';
 import { log } from 'console';
+import exp from 'constants';
+
+
 
 dotenv.config();  // Load environment variables
 
@@ -150,3 +153,4 @@ export function calculateBusFactor(contributors: CommitNode[]): number {
     return busFactor;
   }
   
+  export { logMessage, GraphQLClient};
