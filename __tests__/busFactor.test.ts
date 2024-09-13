@@ -1,13 +1,6 @@
-import { calculateBusFactor } from './busFactor';
-import {jest } from '@jest/globals';
 
-
-
-//require the function to test
-jest.mock('./busFactor', () => ({
-  calculateBusFactor: jest.fn(() => 1),
-}));
-
+import { describe, it, expect } from 'vitest';
+import { calculateBusFactor } from '../src/busFactor.js';
 
 describe('Bus Factor Calculation', () => {
   it('should calculate the correct bus factor for contributors', () => {

@@ -10,7 +10,7 @@
     "package:linux": "pkg dist/index.js --targets node18-linux-x64 --output dist/run",
     "package:win": "pkg dist/index.js --targets node18-win-x64 --output dist/run",
     "package:macos": "pkg dist/index.js --targets node18-macos-x64 --output dist/run",
-    "test": "jest --verbose --coverage --config jest.config.ts",
+    "test": "npx vitest run",
     "fetch": "node dist/fetch.js",
     "clean:logs": "node dist/clearLog.js"
   },
@@ -29,6 +29,7 @@
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
+    "vitest": "^2.1.1",
     "graphql": "^16.9.0"
   },
   "dependencies": {
