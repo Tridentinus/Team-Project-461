@@ -1,7 +1,10 @@
 import * as dotenv from 'dotenv';
-import { fetchRepoData } from './graphqlClient.js';
+import { calculateBusFactor, fetchRepoContributors } from './busFactor.js';
+import { fetchRepoData } from './repoData.js';
 import minimist from 'minimist';
 import fs from 'fs';
+
+
 
 
 
@@ -45,4 +48,25 @@ if (!owner || !name) {
     logMessage(`Error fetching data: ${errorMessage}`);
     console.error(`Error fetching data: ${errorMessage}`);
   }
+})();
+
+(async () => {
+  try {
+    logMessage(`Fetching contributors for ${owner}/${name}...`);
+    console.log(`Fetching contributors for ${owner}/${name}...`);
+
+    // Pass token along with owner and repo name
+    const contributors = await fetchRepoContributors(owner, name, token);
+
+    if (contributors) {
+      const busFactor = calculateBusFactor(contributors);
+      logMessage(`Bus factor for ${owner}/${name}: ${busFactor}`);
+      console.log(`Bus factor for ${owner}/${name}: ${busFactor}`);
+    }
+  } catch (error) {
+    const errorMessage = (error instanceof Error) ? error.message : 'Unknown error occurred';
+    logMessage(`Error fetching contributors: ${errorMessage}`);
+    console.error(`Error fetching contributors: ${errorMessage}`);
+  }
+
 })();
