@@ -1,5 +1,5 @@
 import { request, getLinkType, getRepoOwnerAndName, getModuleNameFromNpmLink} from "./utils.js";
-import { GraphQLClient, gql } from 'graphql-request';
+import { gql } from 'graphql-request';
 
  /**
  * Fetches repository license using a GraphQL query.
@@ -15,18 +15,16 @@ import { GraphQLClient, gql } from 'graphql-request';
     query($owner: String!, $name: String!) {
       repository(owner: $owner, name: $name) {
         licenseInfo {
-          name
           spdxId
-
         }
       }
     }
   `;
 
   const variables = { owner, name };  // variables required for the query
-  const data: { repository?: { licenseInfo?: { name: string, spdxId: string } } } =
+  const data: { repository?: { licenseInfo?: { spdxId: string } } } =
       (await request(endpoint, query, variables, token)) as {
-        repository?: { licenseInfo?: { name: string, spdxId: string } };
+        repository?: { licenseInfo?: { spdxId: string } };
       };  // fetch the data using the query
 
   // extract the license information from the fetched data
@@ -38,7 +36,13 @@ import { GraphQLClient, gql } from 'graphql-request';
   }
 }
 
-// Function to get the license of an npm module
+/**
+ * Fetches the license of an npm module using a GraphQL query.
+ * 
+ * @param moduleName - The name of the npm module.
+ * @param token - The GitHub token used for authentication.
+ * @returns A promise that resolves to the license of the npm module, or null if the license information is not found. }
+**/
 export async function getNpmModuleLicense(moduleName: string, token: string): Promise<string | null> {
   console.log('Fetching license for', moduleName);
   const endpoint = 'https://registry.npmjs.org/-/graphql';
@@ -69,7 +73,12 @@ export async function getNpmModuleLicense(moduleName: string, token: string): Pr
   }
 }
 
-
+/**
+ * Checks if a given license is compatible with LGPLv2.1.
+ * 
+ * @param license - The license to check compatibility for.
+ * @returns A number indicating the compatibility of the license. Returns 1 if the license is compatible, and 0 if it is not.
+ */
 function isLicenseCompatible(license: string): number {
   // List of licenses compatible with LGPLv2.1
   const compatibleLicenses = [

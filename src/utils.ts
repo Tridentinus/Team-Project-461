@@ -8,7 +8,12 @@ dotenv.config(); // Load environment variables
 const endpoint = "https://api.github.com/graphql";  // GraphQL endpoint
 const logFile = process.env.LOG_FILE || 'myLog.log';  // Log file path
 
-
+/**
+ * Determines the type of a given link.
+ * 
+ * @param link - The link to be evaluated.
+ * @returns The type of the link. Possible values are "GitHub", "npm", or "Unknown".
+ */
 export function getLinkType(link: string): string {
   const githubRegex = /^https?:\/\/(www\.)?github\.com\//;
   const npmRegex = /^https?:\/\/(www\.)?npmjs\.com\//;
@@ -22,14 +27,13 @@ export function getLinkType(link: string): string {
   }
 }
   
-  /**
+/**
  * Fetches repository data using a GraphQL query and a dynamic GitHub token.
  * @param query - The GraphQL query to fetch the data.
  * @param variables - The variables required for the GraphQL query.
  * @param token - The GitHub token used for authentication.
  * @returns The fetched data or null in case of an error.
  */
-
 export async function request<TVariables extends object | undefined>(
   endpoint: string,
   query: string,
@@ -74,6 +78,12 @@ export function getRepoOwnerAndName(repoLink: string): { owner: string, name: st
   }
 }
 
+/**
+ * Extracts the module name from a given npm link.
+ * 
+ * @param link - The link to the npm package.
+ * @returns The module name extracted from the link, or null if the link is invalid.
+ */
 export function getModuleNameFromNpmLink(link: string): string | null {
   // Define a regular expression to match npmjs.com URLs and capture the module name
   const npmRegex = /^https?:\/\/(?:www\.)?npmjs\.com\/package\/([^\/]+)/;
