@@ -1,4 +1,3 @@
-import { getRepoOwnerAndName } from './utils.js';
 import {getLicenseScore} from './license.js';
 const args = process.argv.slice(2); // exclude first two arguments (node and script path)
 
@@ -14,11 +13,6 @@ if (args.length !== 1) {
   console.log("Running tests...");
 } else {
   // otherwise, assume we have a URL_FILE
-  const result = getRepoOwnerAndName(args[0]);
-  if (result == null) {
-    console.error("Invalid GitHub repository link.");
-    process.exit(1);
-  }
-  const license_score = await getLicenseScore(result.owner, result.name, process.env.GITHUB_TOKEN || "");
+  const license_score = await getLicenseScore(args[0]);
   console.log(`License compatibility score: ${license_score}`);
 }
