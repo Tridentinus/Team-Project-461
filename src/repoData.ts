@@ -1,10 +1,8 @@
 import { GraphQLClient } from 'graphql-request';
 import dotenv from 'dotenv';
 import * as fs from 'fs';
+import { log } from 'console';
 
-// const { GraphQLClient } = require('graphql-request');
-// const dotenv = require('dotenv');
-// const fs = require('fs');
 
 dotenv.config();  // Load environment variables
 
@@ -19,6 +17,8 @@ function logMessage(level: string, message: string) {
 }
 
 // Function to fetch repository data with dynamic GitHub token
+// Arguments: owner (string), name (string), token (string)
+// Returns: Promise<void>
 export async function fetchRepoData(owner: string, name: string, token: string) {
   // Create GraphQL client instance with dynamic token
   const client = new GraphQLClient(endpoint, {
@@ -47,3 +47,5 @@ export async function fetchRepoData(owner: string, name: string, token: string) 
     console.error(`Error fetching data: ${errorMessage}`);
   }
 }
+
+
