@@ -67,4 +67,4 @@ TEST-results.xml
 dist/
 .env
 /node_modules
-*.log
+**/*.log

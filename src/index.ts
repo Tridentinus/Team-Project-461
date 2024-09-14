@@ -1,3 +1,4 @@
+import {getLicenseScore} from './license.js';
 import { analyzeUrl } from './analyzeUrl.js';
 import { isGithub, isNpm, getGithubRepo } from './analyzeUrl';
 import { fetchRepoContributors, calculateBusFactor } from './busFactor.js';
@@ -41,6 +42,9 @@ if (args.length !== 1) {
   logMessage('INFO', testMessage);
   // Add your test logic here if needed
 } else {
+  // otherwise, assume we have a URL_FILE
+  const license_score = await getLicenseScore(args[0]);
+  console.log(`License compatibility score: ${license_score}`);
   const urlFilePath = args[0];
   const token = process.env.GITHUB_TOKEN;
 

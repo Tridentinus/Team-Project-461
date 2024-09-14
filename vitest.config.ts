@@ -6,5 +6,10 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     // Other configurations
+    coverage: {
+      provider: 'istanbul', // Use istanbul for coverage
+      reporter: ['text', 'json', 'html'], // Reporters: text, json, and HTML
+      all: true, // Collect coverage from all files
+    },
   },
 });
