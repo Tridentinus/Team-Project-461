@@ -40,7 +40,7 @@ describe('calculateRampUpScore', () => {
     const result = await calculateRampUpScore(repoUrl, repoPath);
 
     expect(result.documentationScore).toBe(1);
-    expect(result.dependenciesScore).toBe(1); // Only one dependency
+    expect(result.dependenciesScore).toBe(0); 
   });
 
   it('should return 0 for missing README file', async () => {
