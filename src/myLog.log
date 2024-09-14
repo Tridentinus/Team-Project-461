@@ -1,127 +1,68 @@
-2024-09-13T17:13:19.239Z - Error: No owner or repository provided
-2024-09-13T17:13:41.412Z - Fetching data for facebook/react...
-2024-09-13T17:13:41.431Z - Fetching contributors for facebook/react...
-2024-09-13T17:13:41.723Z [INFO] - Successfully fetched data for facebook/react
-2024-09-13T17:13:41.963Z [INFO] - Successfully fetched contributors for facebook/react
-2024-09-13T17:13:41.964Z [INFO] - Commit count by author:
-2024-09-13T17:13:41.964Z [INFO] - Sebastian Markbåge: 46 commits
-2024-09-13T17:13:41.965Z [INFO] - Mofei Zhang: 6 commits
-2024-09-13T17:13:41.965Z [INFO] - Josh Story: 1 commits
-2024-09-13T17:13:41.965Z [INFO] - Ruslan Lesiutin: 8 commits
-2024-09-13T17:13:41.965Z [INFO] - Andrew Clark: 5 commits
-2024-09-13T17:13:41.965Z [INFO] - Joe Savona: 24 commits
-2024-09-13T17:13:41.965Z [INFO] - Sam Zhou: 1 commits
-2024-09-13T17:13:41.966Z [INFO] - Alex Hunt: 1 commits
-2024-09-13T17:13:41.966Z [INFO] - Mike Vitousek: 3 commits
-2024-09-13T17:13:41.966Z [INFO] - mofeiZ: 1 commits
-2024-09-13T17:13:41.966Z [INFO] - Rune Botten: 1 commits
-2024-09-13T17:13:41.966Z [INFO] - Benoit Girard: 1 commits
-2024-09-13T17:13:41.966Z [INFO] - Lauren Tan: 2 commits
-2024-09-13T17:13:41.966Z [INFO] - Sorted contributors by commit count:
-2024-09-13T17:13:41.966Z [INFO] - Sebastian Markbåge: 46 commits
-2024-09-13T17:13:41.966Z [INFO] - Joe Savona: 24 commits
-2024-09-13T17:13:41.966Z [INFO] - Ruslan Lesiutin: 8 commits
-2024-09-13T17:13:41.966Z [INFO] - Mofei Zhang: 6 commits
-2024-09-13T17:13:41.966Z [INFO] - Andrew Clark: 5 commits
-2024-09-13T17:13:41.966Z [INFO] - Mike Vitousek: 3 commits
-2024-09-13T17:13:41.966Z [INFO] - Lauren Tan: 2 commits
-2024-09-13T17:13:41.966Z [INFO] - Josh Story: 1 commits
-2024-09-13T17:13:41.967Z [INFO] - Sam Zhou: 1 commits
-2024-09-13T17:13:41.967Z [INFO] - Alex Hunt: 1 commits
-2024-09-13T17:13:41.967Z [INFO] - mofeiZ: 1 commits
-2024-09-13T17:13:41.967Z [INFO] - Rune Botten: 1 commits
-2024-09-13T17:13:41.967Z [INFO] - Benoit Girard: 1 commits
-2024-09-13T17:13:41.967Z [INFO] - Total number of commits: 100
-2024-09-13T17:13:41.967Z [INFO] - Cumulative commits: 46, Current bus factor: 1
-2024-09-13T17:13:41.967Z [INFO] - Cumulative commits: 70, Current bus factor: 2
-2024-09-13T17:13:41.967Z [INFO] - Reached 50% of the total commits. Bus factor is: 2
-2024-09-13T17:13:41.967Z [INFO] - Final calculated Bus Factor: 2
-2024-09-13T17:13:41.967Z - Bus factor for facebook/react: 2
-2024-09-13T18:06:43.125Z [INFO] - Commit count by author:
-2024-09-13T18:06:43.127Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:06:43.127Z [INFO] - Sorted contributors by commit count:
-2024-09-13T18:06:43.127Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:06:43.128Z [INFO] - Total number of commits: 1
-2024-09-13T18:06:43.128Z [INFO] - Cumulative commits: 1, Current bus factor: 1
-2024-09-13T18:06:43.128Z [INFO] - Reached 50% of the total commits. Bus factor is: 1
-2024-09-13T18:06:43.128Z [INFO] - Final calculated Bus Factor: 1
-2024-09-13T18:08:06.435Z [INFO] - Commit count by author:
-2024-09-13T18:08:06.436Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:08:06.436Z [INFO] - Sorted contributors by commit count:
-2024-09-13T18:08:06.436Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:08:06.436Z [INFO] - Total number of commits: 1
-2024-09-13T18:08:06.436Z [INFO] - Cumulative commits: 1, Current bus factor: 1
-2024-09-13T18:08:06.436Z [INFO] - Reached 50% of the total commits. Bus factor is: 1
-2024-09-13T18:08:06.436Z [INFO] - Final calculated Bus Factor: 1
-2024-09-13T18:11:09.119Z [INFO] - Commit count by author:
-2024-09-13T18:11:09.120Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:11:09.120Z [INFO] - Sorted contributors by commit count:
-2024-09-13T18:11:09.120Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:11:09.120Z [INFO] - Total number of commits: 1
-2024-09-13T18:11:09.120Z [INFO] - Cumulative commits: 1, Current bus factor: 1
-2024-09-13T18:11:09.120Z [INFO] - Reached 50% of the total commits. Bus factor is: 1
-2024-09-13T18:11:09.120Z [INFO] - Final calculated Bus Factor: 1
-2024-09-13T18:14:06.126Z [INFO] - Commit count by author:
-2024-09-13T18:14:06.127Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:14:06.127Z [INFO] - Sorted contributors by commit count:
-2024-09-13T18:14:06.127Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:14:06.127Z [INFO] - Total number of commits: 1
-2024-09-13T18:14:06.127Z [INFO] - Cumulative commits: 1, Current bus factor: 1
-2024-09-13T18:14:06.128Z [INFO] - Reached 50% of the total commits. Bus factor is: 1
-2024-09-13T18:14:06.128Z [INFO] - Final calculated Bus Factor: 1
-2024-09-13T18:17:44.053Z [INFO] - Commit count by author:
-2024-09-13T18:17:44.056Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:17:44.056Z [INFO] - Sorted contributors by commit count:
-2024-09-13T18:17:44.056Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:17:44.056Z [INFO] - Total number of commits: 1
-2024-09-13T18:17:44.056Z [INFO] - Cumulative commits: 1, Current bus factor: 1
-2024-09-13T18:17:44.056Z [INFO] - Reached 50% of the total commits. Bus factor is: 1
-2024-09-13T18:17:44.056Z [INFO] - Final calculated Bus Factor: 1
-2024-09-13T18:21:35.593Z [INFO] - Commit count by author:
-2024-09-13T18:21:35.595Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:21:35.595Z [INFO] - Sorted contributors by commit count:
-2024-09-13T18:21:35.595Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:21:35.595Z [INFO] - Total number of commits: 1
-2024-09-13T18:21:35.595Z [INFO] - Cumulative commits: 1, Current bus factor: 1
-2024-09-13T18:21:35.595Z [INFO] - Reached 50% of the total commits. Bus factor is: 1
-2024-09-13T18:21:35.596Z [INFO] - Final calculated Bus Factor: 1
-2024-09-13T18:23:05.679Z [INFO] - Commit count by author:
-2024-09-13T18:23:05.684Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:23:05.684Z [INFO] - Sorted contributors by commit count:
-2024-09-13T18:23:05.684Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:23:05.684Z [INFO] - Total number of commits: 1
-2024-09-13T18:23:05.684Z [INFO] - Cumulative commits: 1, Current bus factor: 1
-2024-09-13T18:23:05.684Z [INFO] - Reached 50% of the total commits. Bus factor is: 1
-2024-09-13T18:23:05.684Z [INFO] - Final calculated Bus Factor: 1
-2024-09-13T18:25:42.355Z [INFO] - Commit count by author:
-2024-09-13T18:25:42.359Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:25:42.359Z [INFO] - Sorted contributors by commit count:
-2024-09-13T18:25:42.359Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:25:42.359Z [INFO] - Total number of commits: 1
-2024-09-13T18:25:42.359Z [INFO] - Cumulative commits: 1, Current bus factor: 1
-2024-09-13T18:25:42.359Z [INFO] - Reached 50% of the total commits. Bus factor is: 1
-2024-09-13T18:25:42.359Z [INFO] - Final calculated Bus Factor: 1
-2024-09-13T18:27:22.219Z [INFO] - Commit count by author:
-2024-09-13T18:27:22.222Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:27:22.222Z [INFO] - Sorted contributors by commit count:
-2024-09-13T18:27:22.222Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:27:22.222Z [INFO] - Total number of commits: 1
-2024-09-13T18:27:22.222Z [INFO] - Cumulative commits: 1, Current bus factor: 1
-2024-09-13T18:27:22.222Z [INFO] - Reached 50% of the total commits. Bus factor is: 1
-2024-09-13T18:27:22.223Z [INFO] - Final calculated Bus Factor: 1
-2024-09-13T18:28:24.817Z [INFO] - Commit count by author:
-2024-09-13T18:28:24.820Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:28:24.820Z [INFO] - Sorted contributors by commit count:
-2024-09-13T18:28:24.820Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:28:24.820Z [INFO] - Total number of commits: 1
-2024-09-13T18:28:24.820Z [INFO] - Cumulative commits: 1, Current bus factor: 1
-2024-09-13T18:28:24.820Z [INFO] - Reached 50% of the total commits. Bus factor is: 1
-2024-09-13T18:28:24.820Z [INFO] - Final calculated Bus Factor: 1
-2024-09-13T18:31:44.620Z [INFO] - Commit count by author:
-2024-09-13T18:31:44.625Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:31:44.625Z [INFO] - Sorted contributors by commit count:
-2024-09-13T18:31:44.625Z [INFO] - Tridentinus: 1 commits
-2024-09-13T18:31:44.625Z [INFO] - Total number of commits: 1
-2024-09-13T18:31:44.625Z [INFO] - Cumulative commits: 1, Current bus factor: 1
-2024-09-13T18:31:44.625Z [INFO] - Reached 50% of the total commits. Bus factor is: 1
-2024-09-13T18:31:44.625Z [INFO] - Final calculated Bus Factor: 1
+2024-09-14T20:18:22.229Z [INFO] - Processing URL file: urls.txt
+2024-09-14T20:18:22.233Z [INFO] - Analyzing URL: https://www.npmjs.com/package/axios
+2024-09-14T20:18:22.233Z [INFO] - Starting analysis for URL: https://www.npmjs.com/package/axios
+2024-09-14T20:18:22.233Z [INFO] - Checked if URL is GitHub: https://www.npmjs.com/package/axios - Result: false
+2024-09-14T20:18:22.233Z [INFO] - Checked if URL is npm package: https://www.npmjs.com/package/axios - Result: true
+2024-09-14T20:18:22.233Z [INFO] - Fetching metadata for npm package: axios
+2024-09-14T20:18:22.749Z [INFO] - Repository information for axios: {
+  "type": "git",
+  "url": "git+https://github.com/axios/axios.git"
+}
+2024-09-14T20:18:22.751Z [INFO] - Checked if URL is GitHub: https://github.com/axios/axios - Result: true
+2024-09-14T20:18:22.751Z [INFO] - Found GitHub repository: axios/axios
+2024-09-14T20:18:22.751Z [INFO] - GitHub repository found for npm package: axios/axios
+2024-09-14T20:18:22.751Z [INFO] - Fetching contributors for axios/axios over the last 12 months...
+2024-09-14T20:18:22.751Z [ERROR] - Error analyzing repository axios/axios: name is not defined
+2024-09-14T20:18:22.752Z [INFO] - Finished analysis for URL: https://www.npmjs.com/package/axios
+2024-09-14T20:18:22.752Z [INFO] - Successfully analyzed: https://www.npmjs.com/package/axios
+2024-09-14T20:19:56.833Z [INFO] - Processing URL file: urls.txt
+2024-09-14T20:19:56.837Z [INFO] - Analyzing URL: https://www.npmjs.com/package/axios
+2024-09-14T20:19:56.837Z [INFO] - Starting analysis for URL: https://www.npmjs.com/package/axios
+2024-09-14T20:19:56.837Z [INFO] - Checked if URL is GitHub: https://www.npmjs.com/package/axios - Result: false
+2024-09-14T20:19:56.837Z [INFO] - Checked if URL is npm package: https://www.npmjs.com/package/axios - Result: true
+2024-09-14T20:19:56.837Z [INFO] - Fetching metadata for npm package: axios
+2024-09-14T20:19:57.373Z [INFO] - Repository information for axios: {
+  "type": "git",
+  "url": "git+https://github.com/axios/axios.git"
+}
+2024-09-14T20:19:57.377Z [INFO] - Checked if URL is GitHub: https://github.com/axios/axios - Result: true
+2024-09-14T20:19:57.377Z [INFO] - Found GitHub repository: axios/axios
+2024-09-14T20:19:57.378Z [INFO] - GitHub repository found for npm package: axios/axios
+2024-09-14T20:19:57.378Z [INFO] - Fetching contributors for axios/axios over the last 12 months...
+2024-09-14T20:19:57.688Z [ERROR] - No contributors found for the past 12 months in axios/axios
+2024-09-14T20:19:57.689Z [INFO] - Finished analysis for URL: https://www.npmjs.com/package/axios
+2024-09-14T20:19:57.689Z [INFO] - Successfully analyzed: https://www.npmjs.com/package/axios
+2024-09-14T20:23:30.071Z [INFO] - Processing URL file: urls.txt
+2024-09-14T20:23:30.075Z [INFO] - Analyzing URL: https://www.npmjs.com/package/axios
+2024-09-14T20:23:30.075Z [INFO] - Starting analysis for URL: https://www.npmjs.com/package/axios
+2024-09-14T20:23:30.075Z [INFO] - Checked if URL is GitHub: https://www.npmjs.com/package/axios - Result: false
+2024-09-14T20:23:30.075Z [INFO] - Checked if URL is npm package: https://www.npmjs.com/package/axios - Result: true
+2024-09-14T20:23:30.076Z [INFO] - Fetching metadata for npm package: axios
+2024-09-14T20:23:30.603Z [INFO] - Repository information for axios: {
+  "type": "git",
+  "url": "git+https://github.com/axios/axios.git"
+}
+2024-09-14T20:23:30.605Z [INFO] - Checked if URL is GitHub: https://github.com/axios/axios - Result: true
+2024-09-14T20:23:30.606Z [INFO] - Found GitHub repository: axios/axios
+2024-09-14T20:23:30.606Z [INFO] - GitHub repository found for npm package: axios/axios
+2024-09-14T20:23:30.606Z [INFO] - Fetching contributors for axios/axios over the last 12 months...
+2024-09-14T20:23:31.701Z [INFO] - Bus factor for the last 12 months for axios/axios: 4
+2024-09-14T20:23:31.702Z [INFO] - Finished analysis for URL: https://www.npmjs.com/package/axios
+2024-09-14T20:23:31.702Z [INFO] - Successfully analyzed: https://www.npmjs.com/package/axios
+2024-09-14T20:25:32.952Z [INFO] - Processing URL file: urls.txt
+2024-09-14T20:25:32.957Z [INFO] - Analyzing URL: https://www.npmjs.com/package/axios
+2024-09-14T20:25:32.957Z [INFO] - Starting analysis for URL: https://www.npmjs.com/package/axios
+2024-09-14T20:25:32.958Z [INFO] - Checked if URL is GitHub: https://www.npmjs.com/package/axios - Result: false
+2024-09-14T20:25:32.958Z [INFO] - Checked if URL is npm package: https://www.npmjs.com/package/axios - Result: true
+2024-09-14T20:25:32.958Z [INFO] - Fetching metadata for npm package: axios
+2024-09-14T20:25:33.505Z [INFO] - Repository information for axios: {
+  "type": "git",
+  "url": "git+https://github.com/axios/axios.git"
+}
+2024-09-14T20:25:33.508Z [INFO] - Checked if URL is GitHub: https://github.com/axios/axios - Result: true
+2024-09-14T20:25:33.508Z [INFO] - Found GitHub repository: axios/axios
+2024-09-14T20:25:33.509Z [INFO] - GitHub repository found for npm package: axios/axios
+2024-09-14T20:25:33.509Z [INFO] - Fetching contributors for axios/axios over the last 12 months...
+2024-09-14T20:25:35.082Z [INFO] - Bus factor for the last 12 months for axios/axios: 4
+2024-09-14T20:25:35.082Z [INFO] - Finished analysis for URL: https://www.npmjs.com/package/axios
+2024-09-14T20:25:35.082Z [INFO] - Successfully analyzed: https://www.npmjs.com/package/axios
