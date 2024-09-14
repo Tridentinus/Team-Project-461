@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { getLicenseScore } from '../src/license';
 import * as license from '../src/license'; // Adjust path to the file where the function is located
 import * as utils from '../src/utils'; // Adjust path to the helpers file
