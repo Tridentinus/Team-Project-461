@@ -1,6 +1,6 @@
 import {getLicenseScore} from './license.js';
 import { analyzeUrl } from './analyzeUrl.js';
-import { isGithub, isNpm, getGithubRepo } from './analyzeUrl';
+import { isGithub, isNpm, getGithubRepo } from './analyzeUrl.js';
 import { fetchRepoContributors, calculateBusFactor } from './busFactor.js';
 import * as fs from 'fs';
 import * as readline from 'readline';

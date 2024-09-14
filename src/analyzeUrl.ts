@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as fs from 'fs';
-import {  fetchRepoData} from './repoData';
+import {  fetchRepoData} from './repoData.js';
 import { calculateBusFactor, fetchRepoContributors ,fetchYearContributors, calculateYearBusFactor} from './busFactor.js';
 
 
