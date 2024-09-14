@@ -1,22 +1,13 @@
-import { GraphQLClient } from 'graphql-request'; 
+import { GraphQLClient } from 'graphql-request';
+import { logMessage } from './utils.js';
 import dotenv from 'dotenv';
-import * as fs from 'fs';
-import { log } from 'console';
-import exp from 'constants';
 
 
 
 dotenv.config();  // Load environment variables
 
 // GraphQL endpoint
-const logFile = process.env.LOG_FILE || 'myLog.log';
 const endpoint = 'https://api.github.com/graphql';
-
-// Function to log messages to the log file
-function logMessage(level: string, message: string) {
-  const logEntry = `${new Date().toISOString()} [${level}] - ${message}\n`;
-  fs.appendFileSync(logFile, logEntry, { flag: 'a' });
-}
 
 
 // this type is the author name and email for each commit

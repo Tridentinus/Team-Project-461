@@ -51,9 +51,7 @@ export async function request<TVariables extends object | undefined>(
     const data = await client.request(query, variables);
     return data; // Return the fetched data
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error occurred";
-    // console.error(`Error fetching data: ${errorMessage}`);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
     return null; // Return null in case of error
   }
 }
