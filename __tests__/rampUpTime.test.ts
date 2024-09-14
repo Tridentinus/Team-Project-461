@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { calculateRampUpScore, getDocumentationScore, getDependenciesScore } from '../src/rampUpTime';
 import * as simpleGitModule from 'simple-git';
 import * as graphqlRequestModule from 'graphql-request';

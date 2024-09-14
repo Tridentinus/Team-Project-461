@@ -86,10 +86,10 @@ export async function calculateRampUpScore(repoUrl: string, repoPath: string): P
     };
 }
 
-// Example Usage
-(async () => {
-    const repoUrl = 'https://github.com/someuser/somerepo';
-    const repoPath = '/path/to/repo';
-    const rampUpScore = await calculateRampUpScore(repoUrl, repoPath);
-    console.log('Ramp-Up Score:', rampUpScore);
-})();
+// // Example Usage
+// (async () => {
+//     const repoUrl = 'https://github.com/someuser/somerepo';
+//     const repoPath = '/path/to/repo';
+//     const rampUpScore = await calculateRampUpScore(repoUrl, repoPath);
+//     console.log('Ramp-Up Score:', rampUpScore);
+// })();

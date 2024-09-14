@@ -1,5 +1,5 @@
 import { describe, it, beforeEach, expect, vi } from 'vitest';
-import { fetchRepoData } from '../src/repoData.js';
+import { fetchRepoData } from '../src/repoData.ts';
 import { GraphQLClient } from 'graphql-request';
 import * as dotenv from 'dotenv';
 
