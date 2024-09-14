@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as fs from 'fs';
 import {  fetchRepoData} from './repoData.js';
 import { calculateBusFactor, fetchRepoContributors ,fetchYearContributors, calculateYearBusFactor} from './busFactor.js';
-
+import { getGitHubLicense, getNpmLicense, isLicenseCompatible, getLicenseScore } from './license.js';
 
 // Log file path (can be set via environment variable)
 const logFile = process.env.LOG_FILE || 'myLog.log';
@@ -82,9 +82,6 @@ export async function getGithubRepo(url: string): Promise<{ owner: string, repo:
 }
 
 
-
-
-
 function extractPackageName(url: string): string {
   const match = url.match(/https:\/\/www.npmjs.com\/package\/([^/]+)/);
   return match ? match[1] : '';
@@ -152,6 +149,21 @@ async function analyzeRepository(owner: string, repo: string, token: string) {
     logMessage('ERROR', errorMessage);
     console.error(errorMessage);
   }
-  //calculate the Bus Factor for last 
+  // return license score
+  const license = await getGitHubLicense(owner, repo, token);
+  logMessage('INFO', `License for ${owner}/${repo}: ${license}`);
+  console.log(`License for ${owner}/${repo}: ${license}`);
+
+  //check if license is compatible
+  const compatibility = isLicenseCompatible(license as string);
+  if (compatibility === 1) {
+    logMessage('INFO', `License is compatible with LGPLv2.1`);
+    console.log(`License is compatible with LGPLv2.1`);
+  }
+  else {
+    logMessage('INFO', `License is not compatible with LGPLv2.1`);
+    console.log(`License is not compatible with LGPLv2.1`);
+  }
+ 
 }
 
