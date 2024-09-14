@@ -1,3 +1,4 @@
+import {getLicenseScore} from './license.js';
 const args = process.argv.slice(2); // exclude first two arguments (node and script path)
 
 if (args.length !== 1) {
@@ -12,5 +13,6 @@ if (args.length !== 1) {
   console.log("Running tests...");
 } else {
   // otherwise, assume we have a URL_FILE
-  console.log("URL_FILE: " + args[0]);
+  const license_score = await getLicenseScore(args[0]);
+  console.log(`License compatibility score: ${license_score}`);
 }
