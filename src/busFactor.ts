@@ -2,6 +2,7 @@ import { GraphQLClient } from 'graphql-request';
 import dotenv from 'dotenv';
 import * as fs from 'fs';
 import { log } from 'console';
+import axios from 'axios';
 import exp from 'constants';
 
 
@@ -153,4 +154,71 @@ export function calculateBusFactor(contributors: CommitNode[]): number {
     return busFactor;
   }
   
-  export { logMessage, GraphQLClient};
+  export async function fetchYearContributors(owner: string, repo: string, token: string): Promise<any[]> {
+    const endpoint = `https://api.github.com/repos/${owner}/${repo}/contributors`;
+  
+    const client = axios.create({
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+    });
+  
+    let contributors: any[] = [];
+    let page = 1;
+    const perPage = 100;  // Fetch maximum 100 contributors per page
+  
+    try {
+      while (true) {
+        const response = await client.get(endpoint, {
+          params: {
+            anon: true,  // Include anonymous contributors
+            per_page: perPage,
+            page: page,
+          },
+        });
+  
+        // Check if response data is valid and an array
+        if (!response.data || !Array.isArray(response.data) || response.data.length === 0) {
+          console.log(`No more contributors to fetch for ${owner}/${repo}.`);
+          break;  // No more contributors to fetch
+        }
+  
+        // Safely concatenate contributors if data is valid
+        contributors = contributors.concat(response.data);
+        page++;
+      }
+  
+      // Sort contributors by the number of commits (contributions) in descending order
+      contributors.sort((a, b) => b.contributions - a.contributions);
+  
+      return contributors;
+  
+    } catch (error) {
+      console.error(`Error fetching contributors: ${(error as Error).message}`);
+      return [];
+    }
+  }
+
+export function calculateYearBusFactor(contributors: any[]): number {
+  const totalCommits = contributors.reduce((sum, contributor) => sum + contributor.contributions, 0);
+
+  // Sort contributors by the number of commits in descending order
+  const sortedContributors = contributors.sort((a, b) => b.contributions - a.contributions);
+
+  let cumulativeCommits = 0;
+  let busFactor = 0;
+
+  for (let contributor of sortedContributors) {
+    cumulativeCommits += contributor.contributions;
+    busFactor++;
+
+    // Stop when cumulative commits reach 50% of total commits
+    if (cumulativeCommits >= totalCommits * 0.5) {
+      break;
+    }
+  }
+
+  return busFactor;
+}

@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import { calculateBusFactor, fetchRepoContributors } from './busFactor.js';
 import { fetchRepoData } from './repoData.js';
+
 import minimist from 'minimist';
 import fs from 'fs';
 
