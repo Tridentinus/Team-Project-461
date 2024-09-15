@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { getLinkType, request, getRepoOwnerAndName, getModuleNameFromNpmLink, logMessage, clearLog } from '../src/utils.ts'; // adjust the path as necessary
+import { getLinkType, getRepoOwnerAndName, getNpmName, logMessage, clearLog, getLinksFromFile, gitHubRequest } from '../src/utils.ts'; // adjust the path as necessary
 import { GraphQLClient } from 'graphql-request';
 import * as fs from 'fs';
 
@@ -22,58 +22,6 @@ describe('getLinkType', () => {
   it('should return "Unknown" for malformed URLs', () => {
     expect(getLinkType('not-a-valid-url')).toBe('Unknown');
     expect(getLinkType('github.com/someuser')).toBe('Unknown'); // No protocol
-  });
-});
-
-// Mock the GraphQLClient
-vi.mock('graphql-request');
-
-describe('request', () => {
-  const mockEndpoint = 'https://api.github.com/graphql';
-  const mockQuery = `
-    query($owner: String!, $name: String!) {
-      repository(owner: $owner, name: $name) {
-        name
-        description
-      }
-    }
-  `;
-  const mockVariables = { owner: 'someowner', name: 'somerepo' };
-  const mockToken = 'mockGitHubToken';
-  
-  it('should fetch data when the request is successful', async () => {
-    const mockClient = GraphQLClient as unknown as { new (): { request: vi.Mock } };
-    const mockRequest = vi.fn();
-    mockClient.prototype.request = mockRequest;
-
-    const mockResponseData = {
-      repository: {
-        name: 'somerepo',
-        description: 'A test repository',
-      },
-    };
-
-    // Mock the request to return mock data
-    mockRequest.mockResolvedValueOnce(mockResponseData);
-
-    const result = await request(mockEndpoint, mockQuery, mockVariables, mockToken);
-
-    expect(mockRequest).toHaveBeenCalledWith(mockQuery, mockVariables);
-    expect(result).toEqual(mockResponseData);
-  });
-
-  it('should return null and log an error if the request fails', async () => {
-    const mockClient = GraphQLClient as unknown as { new (): { request: vi.Mock } };
-    const mockRequest = vi.fn();
-    mockClient.prototype.request = mockRequest;
-
-    const mockError = new Error('Request failed');
-    mockRequest.mockRejectedValueOnce(mockError);
-
-    const result = await request(mockEndpoint, mockQuery, mockVariables, mockToken);
-
-    expect(mockRequest).toHaveBeenCalledWith(mockQuery, mockVariables);
-    expect(result).toBeNull();
   });
 });
 
@@ -106,35 +54,35 @@ describe('getRepoOwnerAndName', () => {
   });
 });
 
-describe('getModuleNameFromNpmLink', () => {
+describe('getNpmName', () => {
   it('should extract the module name from a valid npm link', () => {
     const validLink = 'https://www.npmjs.com/package/express';
-    const result = getModuleNameFromNpmLink(validLink);
+    const result = getNpmName(validLink);
     expect(result).toBe('express');
   });
 
   it('should extract the module name from an npm link without "www"', () => {
     const validLinkNoWWW = 'https://npmjs.com/package/lodash';
-    const result = getModuleNameFromNpmLink(validLinkNoWWW);
+    const result = getNpmName(validLinkNoWWW);
     expect(result).toBe('lodash');
   });
 
   it('should return null for an invalid npm link', () => {
     const invalidLink = 'https://www.npmjs.com/notapackage/express';
-    const result = getModuleNameFromNpmLink(invalidLink);
+    const result = getNpmName(invalidLink);
     expect(result).toBeNull();
   });
 
   it('should return null for a non-npm link', () => {
     const nonNpmLink = 'https://example.com/package/express';
-    const result = getModuleNameFromNpmLink(nonNpmLink);
+    const result = getNpmName(nonNpmLink);
     expect(result).toBeNull();
   });
 
   it('should handle edge cases like empty or malformed URLs', () => {
-    expect(getModuleNameFromNpmLink('')).toBeNull(); // Empty string
-    expect(getModuleNameFromNpmLink('https://npmjs.com/package/')).toBeNull(); // Missing module name
-    expect(getModuleNameFromNpmLink('https://www.npmjs.com/')).toBeNull(); // Incomplete URL
+    expect(getNpmName('')).toBeNull(); // Empty string
+    expect(getNpmName('https://npmjs.com/package/')).toBeNull(); // Missing module name
+    expect(getNpmName('https://www.npmjs.com/')).toBeNull(); // Incomplete URL
   });
 });
 
@@ -202,5 +150,95 @@ describe('clearLog', () => {
     // Assert: Check that the log file does not exist and writeFileSync was not called
     expect(mockExistsSync).toHaveBeenCalledWith(mockLogFile);
     expect(mockWriteFileSync).not.toHaveBeenCalled();
+  });
+});
+
+// Mock the `fs` module
+vi.mock('fs');
+
+describe('getLinksFromFile', () => {
+    it('should return an array of links when the file contains links', () => {
+        // Setup the mock
+        vi.mocked(fs.existsSync).mockReturnValue(true);
+        vi.mocked(fs.readFileSync).mockReturnValue('https://github.com/cloudinary/cloudinary_npm\nhttps://www.npmjs.com/package/express\n');
+        
+        const filePath = 'mock/path/to/package.json';
+        const result = getLinksFromFile(filePath);
+        
+        expect(result).toEqual([
+            'https://github.com/cloudinary/cloudinary_npm',
+            'https://www.npmjs.com/package/express'
+        ]);
+    });
+
+    it('should return an empty array when the file is empty', () => {
+        // Setup the mock
+        vi.mocked(fs.existsSync).mockReturnValue(true);
+        vi.mocked(fs.readFileSync).mockReturnValue('');
+        
+        const filePath = 'mock/path/to/package.json';
+        const result = getLinksFromFile(filePath);
+        
+        expect(result).toEqual([]);
+    });
+
+    it('should throw an error when the file does not exist', () => {
+        // Setup the mock
+        vi.mocked(fs.existsSync).mockReturnValue(false);
+        
+        const filePath = 'mock/path/to/nonexistent-file.json';
+        
+        expect(() => getLinksFromFile(filePath)).toThrow(`File not found: ${filePath}`);
+    });
+});
+
+
+// Mock the GraphQLClient
+vi.mock('graphql-request');
+
+describe('gitHubRequest', () => {
+  const mockQuery = `
+    query($owner: String!, $name: String!) {
+      repository(owner: $owner, name: $name) {
+        name
+        description
+      }
+    }
+  `;
+  const mockVariables = { owner: 'someowner', name: 'somerepo' };
+  
+  it('should fetch data when the request is successful', async () => {
+    const mockClient = GraphQLClient as unknown as { new (): { request: vi.Mock } };
+    const mockRequest = vi.fn();
+    mockClient.prototype.request = mockRequest;
+
+    const mockResponseData = {
+      repository: {
+        name: 'somerepo',
+        description: 'A test repository',
+      },
+    };
+
+    // Mock the request to return mock data
+    mockRequest.mockResolvedValueOnce(mockResponseData);
+
+    const result = await gitHubRequest(mockQuery, mockVariables);
+
+    expect(mockRequest).toHaveBeenCalledWith(mockQuery, mockVariables);
+    expect(result).toEqual(mockResponseData);
+  });
+
+  it('should return null and log an error if the request fails', async () => {
+    const mockClient = GraphQLClient as unknown as { new (): { request: vi.Mock } };
+    const mockRequest = vi.fn();
+    mockClient.prototype.request = mockRequest;
+
+    const mockError = new Error('Request failed');
+    mockRequest.mockRejectedValueOnce(mockError);
+
+    const result = await gitHubRequest(mockQuery, mockVariables);
+
+    expect(mockRequest).toHaveBeenCalledWith(mockQuery, mockVariables);
+    expect(result).toBeNull();
   });
 });

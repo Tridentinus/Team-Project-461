@@ -1,7 +1,8 @@
-import { getLicenseScore } from './license.js';
-import { getRepoOwnerAndName } from './utils.js';
+import { getGitHubLicenseScore } from './license.js';
+import { getRepoOwnerAndName, getNpmName, getLinksFromFile, getLinkType } from './utils.js';
 import { fetchRepoContributors, calculateBusFactor } from './busFactor.js';
 import { exec } from 'child_process';
+import * as path from 'path';
 
 
 const args = process.argv.slice(2); // exclude first two arguments (node and script path)
@@ -32,11 +33,47 @@ if (args.length !== 1) {
   console.log("Running tests...");
 } else {
   // otherwise, assume we have a URL_FILE
-  const license_score = await getLicenseScore(args[0]);
-  const { owner, name } = getRepoOwnerAndName(args[0]) || { owner: '', name: '' };
-  const token = process.env.GITHUB_TOKEN || '';
-  const contributors = await fetchRepoContributors(owner, name, token);
-  const bus_factor = calculateBusFactor(contributors);
-  console.log(`License: ${license_score}`);
-  console.log(`Bus factor: ${bus_factor}`);
+  
+  // Read links from file
+  const links = getLinksFromFile(args[0]);
+  
+  if (!links) {
+    console.log('Error reading links from file');
+    process.exit(1);
+  }
+
+  for (const link of links) {
+    console.log(`Analyzing repository: ${link}`);
+
+    const linkType = getLinkType(link);
+
+    if (linkType === 'Unknown') {
+      console.log(`Unknown link type: ${link}`);
+      process.exit(1);
+    }
+
+    if (linkType === 'npm') {
+      const name = getNpmName(link);
+      if (!name) {
+        console.log(`Invalid npm link: ${link}`);
+        process.exit(1);
+      }
+      continue;
+    }
+
+    if (linkType === 'GitHub') {
+      const { owner, name } = getRepoOwnerAndName(link) || { owner: '', name: '' };
+      if (!owner || !name) {
+        console.log(`Invalid GitHub link: ${link}`);
+        process.exit(1);
+      }
+      const token = process.env.GitHub_TOKEN || '';
+      const license_score = await getGitHubLicenseScore(owner, name);
+      const contributors = await fetchRepoContributors(owner, name, token);
+      const bus_factor = calculateBusFactor(contributors);
+      
+      console.log(`License score: ${license_score}`);
+      console.log(`Bus factor: ${bus_factor}`);
+    }
+  }
 }
