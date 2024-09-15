@@ -1,6 +1,7 @@
 import { gql } from 'graphql-request';
 import { JSDOM } from 'jsdom';
-import { gitHubRequest } from './utils.js';
+import { gitHubRequest, logMessage } from './utils.js';
+import { log } from 'console';
 
 const KEYWORDS = ["installation", "usage", "api", "examples"];
 const SCORE_THRESHOLD = 0; // Default score when no documentation is found
@@ -43,15 +44,12 @@ export async function getDocumentationScore(repoOwner: string, repoName: string)
 
     try {
         const data = await gitHubRequest(query, { repoOwner, repoName }) as ReadmeResponse;
-        console.log(data);
         const readmeContent = data.repository.object.text || '';
-        console.log(readmeContent);
         const dom = new JSDOM(readmeContent);
-        console.log(dom);
         const text = dom.window.document.body.textContent || '';
         return calculateScore(text);
     } catch (err) {
-        console.error('Error fetching README:', err);
+        logMessage('ERROR', `Error fetching README for ${repoOwner}/${repoName}`);
         return SCORE_THRESHOLD; // No documentation found
     }
 }
@@ -63,7 +61,7 @@ export async function getDependenciesScore(repoPath: string): Promise<number> {
         const dependenciesCount = Object.keys(packageJson.dependencies || {}).length;
         return dependenciesCount < 10 ? 1 : (10 / dependenciesCount); // Fewer dependencies = higher score
     } catch (err) {
-        console.error('Error reading package.json:', err);
+        logMessage('ERROR', `Error reading package.json for ${repoPath}`);
         return 0;
     }
 }

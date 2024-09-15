@@ -1,6 +1,5 @@
 import * as dotenv from 'dotenv';
 import { calculateBusFactor, fetchRepoContributors } from './busFactor.js';
-import { fetchRepoData } from './repoData.js';
 
 import minimist from 'minimist';
 import fs from 'fs';
@@ -33,20 +32,6 @@ if (!owner || !name) {
   console.error('Error: Please provide repository owner and name');
   process.exit(1);
 }
-
-(async () => {
-  try {
-    logMessage(`Fetching data for ${owner}/${name}...`);
-    console.log(`Fetching data for ${owner}/${name}...`);
-
-    // Pass token along with owner and repo name
-    await fetchRepoData(owner, name, token);
-  } catch (error) {
-    const errorMessage = (error instanceof Error) ? error.message : 'Unknown error occurred';
-    logMessage(`Error fetching data: ${errorMessage}`);
-    console.error(`Error fetching data: ${errorMessage}`);
-  }
-})();
 
 (async () => {
   try {

@@ -172,7 +172,7 @@ export function calculateBusFactor(contributors: CommitNode[]): number {
   
         // Check if response data is valid and an array
         if (!response.data || !Array.isArray(response.data) || response.data.length === 0) {
-          console.log(`No more contributors to fetch for ${owner}/${repo}.`);
+          logMessage('INFO', `No more contributors to fetch for ${owner}/${repo}.`);
           break;  // No more contributors to fetch
         }
   

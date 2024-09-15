@@ -1,4 +1,4 @@
-import { gitHubRequest } from "./utils.js";
+import { gitHubRequest, logMessage } from "./utils.js";
 
  /**
  * Fetches repository license using a GraphQL query.
@@ -91,7 +91,7 @@ export function isLicenseCompatible(license: string): number {
 export async function getGitHubLicenseScore(owner: string, name: string): Promise<number> {
     const license = await getGitHubLicense(owner, name);
     if (license === null) {
-      console.log('No license information found');
+      logMessage('ERROR', 'No license information found');
       return 0;
     }
 
@@ -107,7 +107,7 @@ export async function getGitHubLicenseScore(owner: string, name: string): Promis
 export async function getNpmLicenseScore(name: string): Promise<number> {
     const license = await getNpmLicense(name);
     if (license === null) {
-      console.log('No license information found');
+      logMessage('ERROR', 'No license information found');
       return 0;
     }
 

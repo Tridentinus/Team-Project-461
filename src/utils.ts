@@ -1,10 +1,11 @@
 import { GraphQLClient } from "graphql-request";
-import { GITHUB_TOKEN, LOG_FILE } from './config.js';
+import { GITHUB_TOKEN, LOG_FILE } from "./config.js";
 import dotenv from "dotenv";
 import * as fs from "fs";
+import axios from "axios";
+import { log } from "console";
 
 dotenv.config(); // Load environment variables
-
 
 /**
  * Determines the type of a given link.
@@ -25,24 +26,23 @@ export function getLinkType(link: string): string {
   }
 }
 
-
 /**
  * Extracts the owner and name of a GitHub repository from a given repository link.
  * @param repoLink - The link to the GitHub repository.
  * @returns An object containing the owner and name of the repository, or null if the link is invalid.
  */
-export function getRepoOwnerAndName(
+export function parseGitHubUrl(
   repoLink: string
-): { owner: string; name: string } | null {
+): { owner: string; repo: string } | null {
   const regex = /https:\/\/github\.com\/([^\/]+)\/([^\/]+)/;
   const match = repoLink.match(regex);
 
   if (match && match.length === 3) {
     const owner = match[1];
-    const name = match[2];
-    return { owner, name };
+    const repo = match[2];
+    return { owner, repo };
   } else {
-    console.log("Invalid GitHub repository link.");
+    logMessage("ERROR", "Invalid GitHub repository link.");
     return null;
   }
 }
@@ -53,7 +53,7 @@ export function getRepoOwnerAndName(
  * @param link - The link to the npm package.
  * @returns The module name extracted from the link, or null if the link is invalid.
  */
-export function getNpmName(link: string): string | null {
+export function parseNpmUrl(link: string): string | null {
   // Define a regular expression to match npmjs.com URLs and capture the module name
   const npmRegex = /^https?:\/\/(?:www\.)?npmjs\.com\/package\/([^\/]+)/;
 
@@ -86,13 +86,13 @@ export function clearLog() {
   if (fs.existsSync(LOG_FILE)) {
     // Clear the contents of the log file by writing an empty string
     fs.writeFileSync(LOG_FILE, "", { flag: "w" });
-    console.log(`Log file "${LOG_FILE}" has been cleared.`);
+    logMessage("INFO", "Log file has been cleared.");
   } else {
-    console.log(`Log file "${LOG_FILE}" does not exist.`);
+    logMessage("ERROR", "Log file does not exist.");
   }
 }
 
-export function getLinksFromFile(filePath: string): string[] {
+export function getUrlsFromFile(filePath: string): string[] {
   // Check if the file exists
   if (!fs.existsSync(filePath)) {
     throw new Error(`File not found: ${filePath}`);
@@ -118,7 +118,7 @@ export function getLinksFromFile(filePath: string): string[] {
  */
 export async function gitHubRequest<TVariables extends object | undefined>(
   query: string,
-  variables: TVariables,
+  variables: TVariables
 ) {
   const endpoint = "https://api.github.com/graphql";
 
@@ -135,7 +135,43 @@ export async function gitHubRequest<TVariables extends object | undefined>(
     const data = await client.request(query, variables);
     return data; // Return the fetched data
   } catch (error) {
-    console.log("GitHub request error:", error);
+    logMessage("ERROR", `GitHub request error: ${(error as Error).message}`);
     return null; // Return null in case of error
   }
+}
+
+/**
+* Fetches the GitHub repository owner and repo name for a given npm package. 
+* @param packageName - The name of the npm package.
+* @returns A promise that resolves to an object containing the owner and name of the GitHub repository, or null if the package does not have a GitHub repository or an error occurs.
+*/
+export async function npmToGitHub(packageName: string): Promise<{owner: string, repo: string} | null> {
+
+  try {
+    logMessage("INFO", `Fetching metadata for npm package: ${packageName}`);
+    const response = await axios.get(`https://api.npms.io/v2/package/${packageName}`);
+
+    // Accessing the repository field under the collected metadata
+    const repoUrl = response.data.collected?.metadata?.links?.repository;
+
+    if (!repoUrl) {
+      logMessage("ERROR", `No repository information found for the npm package: ${packageName}`);
+      return null;
+    }
+
+    if (getLinkType(repoUrl) === "GitHub") {
+      const repoInfo = parseGitHubUrl(repoUrl) || { owner: "", repo: "" };
+      logMessage(
+        "INFO",
+        `Found GitHub repository: ${repoInfo.owner}/${repoInfo.repo}`
+      );
+      return repoInfo;
+    }
+  } catch (error) {
+    const errorMessage = `Error fetching package data from npm API for package: ${packageName}. Error: ${
+      (error as Error).message
+    }`;
+    logMessage("ERROR", errorMessage);
+  }
+  return null;
 }
