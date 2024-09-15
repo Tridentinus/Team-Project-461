@@ -5,7 +5,6 @@ import { fetchRepoContributors, calculateBusFactor } from './busFactor.js';
 import * as fs from 'fs';
 import * as readline from 'readline';
 import * as dotenv from 'dotenv';
-import { dot } from 'node:test/reporters';
 
 dotenv.config();  // Load environment variables
 const logFile = process.env.LOG_FILE || 'myLog.log';  // Log file path
