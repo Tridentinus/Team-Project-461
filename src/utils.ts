@@ -1,12 +1,10 @@
 import { GraphQLClient } from "graphql-request";
-import { GITHUB_TOKEN } from './config.js';
+import { GITHUB_TOKEN, LOG_FILE } from './config.js';
 import dotenv from "dotenv";
 import * as fs from "fs";
 
 dotenv.config(); // Load environment variables
 
-// Global variables
-const logFile = process.env.LOG_FILE || "myLog.log"; // Log file path
 
 /**
  * Determines the type of a given link.
@@ -75,7 +73,7 @@ export function getNpmName(link: string): string | null {
  */
 export function logMessage(level: string, message: string) {
   const logEntry = `${new Date().toISOString()} [${level}] - ${message}\n`;
-  fs.appendFileSync(logFile, logEntry, { flag: "a" });
+  fs.appendFileSync(LOG_FILE, logEntry, { flag: "a" });
 }
 
 /**
@@ -85,12 +83,12 @@ export function logMessage(level: string, message: string) {
  */
 export function clearLog() {
   // Check if the log file exists
-  if (fs.existsSync(logFile)) {
+  if (fs.existsSync(LOG_FILE)) {
     // Clear the contents of the log file by writing an empty string
-    fs.writeFileSync(logFile, "", { flag: "w" });
-    console.log(`Log file "${logFile}" has been cleared.`);
+    fs.writeFileSync(LOG_FILE, "", { flag: "w" });
+    console.log(`Log file "${LOG_FILE}" has been cleared.`);
   } else {
-    console.log(`Log file "${logFile}" does not exist.`);
+    console.log(`Log file "${LOG_FILE}" does not exist.`);
   }
 }
 

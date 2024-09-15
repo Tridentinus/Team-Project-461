@@ -1,14 +1,27 @@
-import { getGitHubLicenseScore } from './license.js';
-import { getRepoOwnerAndName, getNpmName, getLinksFromFile, getLinkType } from './utils.js';
+import { getGitHubLicenseScore, getNpmLicenseScore } from './license.js';
+import { getRepoOwnerAndName, getNpmName, getLinksFromFile, getLinkType, logMessage } from './utils.js';
 import { fetchRepoContributors, calculateBusFactor } from './busFactor.js';
 import { exec } from 'child_process';
+import { analyzeUrl } from './analyzeUrl.js';
+import * as dotenv from 'dotenv';
+import { GITHUB_TOKEN } from './config.js';
 
+dotenv.config();  // Load environment variables
 
+// Function to handle process termination with logging
+function exitWithError(message: string) {
+  console.error(message);
+  logMessage('ERROR', message);
+  process.exit(1);
+}
+
+// Main CLI logic
 const args = process.argv.slice(2); // exclude first two arguments (node and script path)
 
 if (args.length !== 1) {
-  // check if exactly one argument is provided
-  console.log("Incorrect number of arguments provided");
+  const errorMessage = "Incorrect number of arguments provided";
+  console.log(errorMessage);
+  logMessage('ERROR', errorMessage);
   process.exit(1);
 } else if (args[0] === "install") {
   // check if the argument is "install"
@@ -25,21 +38,21 @@ if (args.length !== 1) {
     }
 
     console.log(`npm install stdout: ${stdout}`);
+    const installMessage = "Installing dependencies...";
+    console.log(installMessage);
+    logMessage('INFO', installMessage);
     process.exit(0);
 });
 } else if (args[0] === "test") {
-  // check if the argument is "test"
-  console.log("Running tests...");
+  const testMessage = "Running tests...";
+  console.log(testMessage);
+  logMessage('INFO', testMessage);
+  // Add your test logic here if needed
 } else {
   // otherwise, assume we have a URL_FILE
   
   // Read links from file
   const links = getLinksFromFile(args[0]);
-  
-  if (!links) {
-    console.log('Error reading links from file');
-    process.exit(1);
-  }
 
   for (const link of links) {
     console.log(`Analyzing repository: ${link}`);
@@ -57,7 +70,7 @@ if (args.length !== 1) {
         console.log(`Invalid npm link: ${link}`);
         process.exit(1);
       }
-      continue;
+      const license_score = await getNpmLicenseScore(name);
     }
 
     if (linkType === 'GitHub') {
@@ -66,13 +79,42 @@ if (args.length !== 1) {
         console.log(`Invalid GitHub link: ${link}`);
         process.exit(1);
       }
-      const token = process.env.GitHub_TOKEN || '';
       const license_score = await getGitHubLicenseScore(owner, name);
-      const contributors = await fetchRepoContributors(owner, name, token);
+      const contributors = await fetchRepoContributors(owner, name, GITHUB_TOKEN);
       const bus_factor = calculateBusFactor(contributors);
       
       console.log(`License score: ${license_score}`);
       console.log(`Bus factor: ${bus_factor}`);
     }
   }
+
+  // Trent's code
+  const urlFilePath = args[0];
+  logMessage('INFO', `Processing URL file: ${urlFilePath}`);
+  processUrls(urlFilePath);
 }
+
+// Function to process URLs from the file
+async function processUrls(urlFilePath: string) {
+  const urls = getLinksFromFile(urlFilePath);
+
+  for (const url of urls) {
+    if (url) {
+      const analyzingMessage = `Analyzing URL: ${url}`;
+      console.log(analyzingMessage);
+      logMessage('INFO', analyzingMessage);
+      try {
+        await analyzeUrl(url, GITHUB_TOKEN);
+        logMessage('INFO', `Successfully analyzed: ${url}`);
+      } catch (error) {
+        const errorMessage = `Error analyzing URL: ${url} - ${(error as Error).message}`;
+        console.error(errorMessage);
+        logMessage('ERROR', errorMessage);
+      }
+    }
+  }
+    const finishedMessage = "Finished processing URLs";
+    console.log(finishedMessage);
+    logMessage('INFO', finishedMessage);
+}
+

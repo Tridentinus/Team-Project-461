@@ -29,11 +29,15 @@
     "@types/node-fetch": "^2.6.11",
     "@vitest/coverage-istanbul": "^2.1.1",
     "graphql": "^16.9.0",
+    "c8": "^10.1.2",
     "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "vitest": "^2.1.1"
   },
   "dependencies": {
+    "axios": "^1.7.7",
+    "babel": "^6.23.0",
     "dotenv": "^16.4.5",
     "fs": "^0.0.1-security",
     "graphql-request": "^7.1.0",
