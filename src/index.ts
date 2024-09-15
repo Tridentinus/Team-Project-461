@@ -2,7 +2,6 @@ import { getGitHubLicenseScore } from './license.js';
 import { getRepoOwnerAndName, getNpmName, getLinksFromFile, getLinkType } from './utils.js';
 import { fetchRepoContributors, calculateBusFactor } from './busFactor.js';
 import { exec } from 'child_process';
-import * as path from 'path';
 
 
 const args = process.argv.slice(2); // exclude first two arguments (node and script path)
