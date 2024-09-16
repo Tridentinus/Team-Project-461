@@ -307,7 +307,7 @@ export function isLicenseCompatible(license: string): number {
  */
 export async function getGitHubLicenseScore(owner: string, name: string): Promise<number> {
     const license = await getGitHubLicense(owner, name);
-    console.log(license);
+    
     if (license === null) {
       logMessage('ERROR', 'No license information found');
       return 0;
