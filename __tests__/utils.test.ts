@@ -4,7 +4,7 @@ import { GraphQLClient } from 'graphql-request';
 import * as fs from 'fs';
 import axios from "axios";
 import * as utils from '../src/utils';
-import { af } from 'vitest/dist/chunks/reporters.WnPwkmgA.js';
+import  {LOG_FILE } from '../src/config.ts';
 
 describe('getLinkType', () => {
   it('should return "GitHub" for GitHub URLs', () => {
@@ -126,7 +126,7 @@ describe('logMessage', () => {
 vi.mock('fs');
 
 describe('clearLog', () => {
-  const mockLogFile = 'myLog.log'; // You can replace this with your actual log file path
+  const mockLogFile = LOG_FILE;
 
   it('should clear the log file if it exists', () => {
     // Arrange: Mock fs.existsSync to return true and fs.writeFileSync
