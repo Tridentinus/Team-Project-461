@@ -1,20 +1,10 @@
-import {getLicenseScore} from './license.js';
+import { getGitHubScores, getNpmScores } from './score.js';
+import { parseGitHubUrl, parseNpmUrl, getUrlsFromFile, getLinkType, logMessage, npmToGitHub } from './utils.js';
+import { exec } from 'child_process';
 import { analyzeUrl } from './analyzeUrl.js';
-import { isGithub, isNpm, getGithubRepo } from './analyzeUrl.js';
-import { fetchRepoContributors, calculateBusFactor } from './busFactor.js';
-import * as fs from 'fs';
-import * as readline from 'readline';
 import * as dotenv from 'dotenv';
-import { dot } from 'node:test/reporters';
-
+import { GITHUB_TOKEN } from './config.js';
 dotenv.config();  // Load environment variables
-const logFile = process.env.LOG_FILE || 'myLog.log';  // Log file path
-const token = process.env.GITHUB_TOKEN || '';  // GitHub token
-// Function to log messages to the log file
-function logMessage(level: string, message: string) {
-  const logEntry = `${new Date().toISOString()} [${level}] - ${message}\n`;
-  fs.appendFileSync(logFile, logEntry, { flag: 'a' });
-}
 
 // Function to handle process termination with logging
 function exitWithError(message: string) {
@@ -28,87 +18,85 @@ const args = process.argv.slice(2); // exclude first two arguments (node and scr
 
 if (args.length !== 1) {
   const errorMessage = "Incorrect number of arguments provided";
-  console.log(errorMessage);
   logMessage('ERROR', errorMessage);
   process.exit(1);
 } else if (args[0] === "install") {
-  const installMessage = "Installing dependencies...";
-  console.log(installMessage);
-  logMessage('INFO', installMessage);
-  // Add your npm install logic here if needed
+  // check if the argument is "install"
+  logMessage('INFO', 'Installing dependencies...');
+  exec('npm install', (error, stdout, stderr) => {
+    if (error) {
+        logMessage('ERROR', `Error executing npm install: ${error.message}`);
+        process.exit(1);
+    }
+
+    if (stderr) {
+        logMessage('ERROR', `npm install stderr: ${stderr}`);
+        process.exit(1);
+    }
+
+    const installMessage = "Installing dependencies...";
+    logMessage('INFO', installMessage);
+    process.exit(0);
+});
 } else if (args[0] === "test") {
   const testMessage = "Running tests...";
-  console.log(testMessage);
+
   logMessage('INFO', testMessage);
   // Add your test logic here if needed
 } else {
   // otherwise, assume we have a URL_FILE
-  const license_score = await getLicenseScore(args[0]);
-  console.log(`License compatibility score: ${license_score}`);
-  const urlFilePath = args[0];
-  const token = process.env.GITHUB_TOKEN;
+  
+  // Read links from file
+  const url_array = getUrlsFromFile(args[0]);
 
-  if (!token || typeof token !== 'string') {
-    exitWithError("Error: No GitHub token provided");
-  }
+  for (const url of url_array) {
+    logMessage('INFO', `Analyzing repository: ${url}`);
 
-  logMessage('INFO', `Processing URL file: ${urlFilePath}`);
-  processUrls(urlFilePath, token as string);
-}
+    let linkType = getLinkType(url);
 
-// Function to process URLs from the file
-async function processUrls(urlFilePath: string, token: string) {
-  if (!fs.existsSync(urlFilePath)) {
-    exitWithError(`Error: URL file does not exist: ${urlFilePath}`);
-  }
+    if (linkType === 'Unknown') {
+      logMessage('ERROR', `Unknown link type: ${url}`);
+      process.exit(1);
+    }
 
-  const rl = readline.createInterface({
-    input: fs.createReadStream(urlFilePath),
-    crlfDelay: Infinity
-  });
+    let {owner, repo} = {owner: '', repo: ''};
 
-  for await (const line of rl) {
-    const url = line.trim();
-    if (url) {
-      const analyzingMessage = `Analyzing URL: ${url}`;
-      console.log(analyzingMessage);
-      logMessage('INFO', analyzingMessage);
-      try {
-        await analyzeUrl(url, token);
-        logMessage('INFO', `Successfully analyzed: ${url}`);
-      } catch (error) {
-        const errorMessage = `Error analyzing URL: ${url} - ${(error as Error).message}`;
-        console.error(errorMessage);
-        logMessage('ERROR', errorMessage);
+    if (linkType === 'npm') {
+      const npmName = parseNpmUrl(url);
+
+      if (!npmName) {
+
+        logMessage('ERROR', `Invalid npm link: ${url}`);
+        process.exit(1);
+      }
+
+      const repoInfo = await npmToGitHub(npmName);
+      if (repoInfo) {
+        owner = repoInfo.owner;
+        repo = repoInfo.repo;
+        const message = `GitHub repository found for npm package: ${owner}/${repo}`;
+        logMessage('INFO', message);
+      }
+      else {
+        const output = await getNpmScores(npmName);
+        console.log(output);
       }
     }
-  }
 
-  rl.on('close', () => {
-    const finishedMessage = "Finished processing URLs";
-    console.log(finishedMessage);
-    logMessage('INFO', finishedMessage);
-  });
-}
+    if (linkType === 'GitHub' || (linkType === 'npm' && owner && repo)) {
+      if (!owner || !repo) {
+        const { owner: o, repo: r } = parseGitHubUrl(url) || { owner: '', repo: '' };
+        owner = o;
+        repo = r;
+      }
 
-async function analyzeRepository(owner: string, repo: string, token: string) {
-  try {
-    logMessage('INFO', `Fetching contributors for ${owner}/${repo}...`);
-    console.log(`Fetching contributors for ${owner}/${repo}...`);
+      if (!owner || !repo) {
+        logMessage('ERROR', `Invalid GitHub link: ${url}`);
+        process.exit(1);
+      }
 
-    // Fetch contributors and calculate the Bus Factor
-    const contributors = await fetchRepoContributors(owner, repo, token);
-
-    if (contributors) {
-      const busFactor = calculateBusFactor(contributors);
-      logMessage('INFO', `Bus factor for ${owner}/${repo}: ${busFactor}`);
-      console.log(`Bus factor for ${owner}/${repo}: ${busFactor}`);
-    } else {
-      logMessage('ERROR', `Failed to fetch contributors for ${owner}/${repo}`);
+      const output = await getGitHubScores(owner, repo);
+      console.log(output);
     }
-  } catch (error) {
-    const errorMessage = `Error analyzing repository ${owner}/${repo}: ${(error as Error).message}`;
-    logMessage('ERROR', errorMessage);
-    console.error(errorMessage);
   }
 }

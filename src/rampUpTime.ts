@@ -1,21 +1,15 @@
-import { request, gql } from 'graphql-request';
-import { simpleGit, SimpleGit } from 'simple-git'; 
+import { gql } from 'graphql-request';
 import { JSDOM } from 'jsdom';
+import { gitHubRequest, logMessage } from './utils.js';
+import { log } from 'console';
+
+const KEYWORDS = ["installation", "usage", "api", "examples"];
+const SCORE_THRESHOLD = 0; // Default score when no documentation is found
 
 interface RampUpScore {
     documentationScore: number;
     dependenciesScore: number;
 }
-
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || 'your-github-token';
-const GITHUB_API_URL = 'https://api.github.com/graphql';
-
-// GraphQL client setup
-const client = async (query: string, variables = {}) => {
-    return request(GITHUB_API_URL, query, variables, {
-        Authorization: `Bearer ${GITHUB_TOKEN}`
-    });
-};
 
 interface ReadmeResponse {
     repository: {
@@ -23,6 +17,15 @@ interface ReadmeResponse {
             text: string;
         }
     }
+}
+
+// Helper function to calculate the documentation score
+function calculateScore(text: string): number {
+    const lowerCaseText = text.toLowerCase();
+    const keywordCount = KEYWORDS.reduce((count, keyword) => 
+        count + (lowerCaseText.includes(keyword) ? 1 : 0), 0
+    );
+    return KEYWORDS.length > 0 ? keywordCount / KEYWORDS.length : SCORE_THRESHOLD;
 }
 
 // 1. Analyze Documentation (presence of README.md, tutorials, etc.)
@@ -38,17 +41,16 @@ export async function getDocumentationScore(repoOwner: string, repoName: string)
             }
         }
     `;
+
     try {
-        const data = await client(query, { repoOwner, repoName }) as ReadmeResponse;
+        const data = await gitHubRequest(query, { repoOwner, repoName }) as ReadmeResponse;
         const readmeContent = data.repository.object.text || '';
         const dom = new JSDOM(readmeContent);
         const text = dom.window.document.body.textContent || '';
-        const keywords = ["installation", "usage", "api", "examples"];
-        const score = keywords.reduce((acc, keyword) => acc + (text.toLowerCase().includes(keyword) ? 1 : 0), 0) / keywords.length;
-        return score;
+        return calculateScore(text);
     } catch (err) {
-        console.error('Error fetching README:', err);
-        return 0; // No documentation found
+        logMessage('ERROR', `Error fetching README for ${repoOwner}/${repoName}`);
+        return SCORE_THRESHOLD; // No documentation found
     }
 }
 
@@ -59,25 +61,16 @@ export async function getDependenciesScore(repoPath: string): Promise<number> {
         const dependenciesCount = Object.keys(packageJson.dependencies || {}).length;
         return dependenciesCount < 10 ? 1 : (10 / dependenciesCount); // Fewer dependencies = higher score
     } catch (err) {
-        console.error('Error reading package.json:', err);
+        logMessage('ERROR', `Error reading package.json for ${repoPath}`);
         return 0;
     }
 }
 
-// Utility function to extract owner and name from the repository URL
-function extractRepoOwnerAndName(repoUrl: string): { repoOwner: string, repoName: string } {
-    const urlParts = repoUrl.split('/');
-    return {
-        repoOwner: urlParts[urlParts.length - 2],
-        repoName: urlParts[urlParts.length - 1]
-    };
-}
 
 // Main function to calculate the overall Ramp-Up Time Score
-export async function calculateRampUpScore(repoUrl: string, repoPath: string): Promise<RampUpScore> {
-    const { repoOwner, repoName } = extractRepoOwnerAndName(repoUrl);
+export async function calculateRampUpScore(owner: string, name: string, repoPath: string): Promise<RampUpScore> {
 
-    const documentationScore = await getDocumentationScore(repoOwner, repoName);
+    const documentationScore = await getDocumentationScore(owner, name);
     const dependenciesScore = await getDependenciesScore(repoPath);
 
     return {
@@ -85,11 +78,3 @@ export async function calculateRampUpScore(repoUrl: string, repoPath: string): P
         dependenciesScore
     };
 }
-
-// Example Usage
-(async () => {
-    const repoUrl = 'https://github.com/someuser/somerepo';
-    const repoPath = '/path/to/repo';
-    const rampUpScore = await calculateRampUpScore(repoUrl, repoPath);
-    console.log('Ramp-Up Score:', rampUpScore);
-})();

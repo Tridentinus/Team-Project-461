@@ -1,8 +1,9 @@
 import axios from 'axios';
 import * as fs from 'fs';
-import {  fetchRepoData} from './repoData.js';
-import { calculateBusFactor, fetchRepoContributors ,fetchYearContributors, calculateYearBusFactor} from './busFactor.js';
-import { getGitHubLicense, getNpmLicense, isLicenseCompatible, getLicenseScore } from './license.js';
+import { fetchYearContributors, calculateYearBusFactor} from './busFactor.js';
+import { getGitHubLicense, isLicenseCompatible, getGitHubLicenseScore } from './license.js';
+import { GITHUB_TOKEN } from './config.js';
+import { getUrlsFromFile } from './utils.js';
 
 // Log file path (can be set via environment variable)
 const logFile = process.env.LOG_FILE || 'myLog.log';
@@ -150,7 +151,7 @@ async function analyzeRepository(owner: string, repo: string, token: string) {
     console.error(errorMessage);
   }
   // return license score
-  const license = await getGitHubLicense(owner, repo, token);
+  const license = await getGitHubLicense(owner, repo);
   logMessage('INFO', `License for ${owner}/${repo}: ${license}`);
   console.log(`License for ${owner}/${repo}: ${license}`);
 
@@ -167,3 +168,25 @@ async function analyzeRepository(owner: string, repo: string, token: string) {
  
 }
 
+// Function to process URLs from the file
+export async function processUrls(urlFilePath: string) {
+  const urls = getUrlsFromFile(urlFilePath);
+
+  for (const url of urls) {
+    if (url) {
+      const analyzingMessage = `Analyzing URL: ${url}`;
+      logMessage('INFO', analyzingMessage);
+      try {
+        await analyzeUrl(url, GITHUB_TOKEN);
+        logMessage('INFO', `Successfully analyzed: ${url}`);
+      } catch (error) {
+        const errorMessage = `Error analyzing URL: ${url} - ${(error as Error).message}`;
+        console.error(errorMessage);
+        logMessage('ERROR', errorMessage);
+      }
+    }
+  }
+    const finishedMessage = "Finished processing URLs";
+    console.log(finishedMessage);
+    logMessage('INFO', finishedMessage);
+}
