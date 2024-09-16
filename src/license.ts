@@ -91,10 +91,10 @@ export async function getGitHubLicense(owner: string, name: string): Promise<str
       'GNU Lesser General Public License family': 'LGPL',
       'GNU Lesser General Public License v2.1': 'LGPL-2.1',
       'GNU Lesser General Public License v3.0': 'LGPL-3.0',
-      'ISC': 'ISC',
+      'ISC License': 'ISC',
       'LaTeX Project Public License v1.3c': 'LPPL-1.3c',
       'Microsoft Public License': 'MS-PL',
-      'MIT': 'MIT',
+      'MIT License': 'MIT',
       'Mozilla Public License 2.0': 'MPL-2.0',
       'Open Software License 3.0': 'OSL-3.0',
       'PostgreSQL License': 'PostgreSQL',
@@ -128,7 +128,7 @@ export async function getGitHubLicense(owner: string, name: string): Promise<str
  * @param text - The text content of the README or LICENSE file.
  * @returns The name of the license or null if not found.
  */
-function extractLicenseFromText(text: string | null): string | null {
+export function extractLicenseFromText(text: string | null): string | null {
   if (!text) return null;
 
   // Regex patterns to identify common licenses
@@ -190,17 +190,11 @@ function extractLicenseFromText(text: string | null): string | null {
     // GNU Affero General Public License v3.0
     /GNU Affero General Public License v3.0/i, // AGPL-3.0
   
-    // GNU General Public License family
-    /GNU General Public License/i, // GPL
-  
     // GNU General Public License v2.0
     /GNU General Public License v2.0/i, // GPL-2.0
   
     // GNU General Public License v3.0
     /GNU General Public License v3.0/i, // GPL-3.0
-  
-    // GNU Lesser General Public License family
-    /GNU Lesser General Public License/i, // LGPL
   
     // GNU Lesser General Public License v2.1
     /GNU Lesser General Public License v2.1/i, // LGPL-2.1
@@ -209,7 +203,7 @@ function extractLicenseFromText(text: string | null): string | null {
     /GNU Lesser General Public License v3.0/i, // LGPL-3.0
   
     // ISC
-    /ISC/i, // ISC
+    /ISC License/i, // ISC
   
     // LaTeX Project Public License v1.3c
     /LaTeX Project Public License v1.3c/i, // LPPL-1.3c
@@ -218,7 +212,7 @@ function extractLicenseFromText(text: string | null): string | null {
     /Microsoft Public License/i, // MS-PL
   
     // MIT
-    /MIT/i, // MIT
+    /MIT License/i, // MIT
   
     // Mozilla Public License 2.0
     /Mozilla Public License 2.0/i, // MPL-2.0
@@ -313,6 +307,7 @@ export function isLicenseCompatible(license: string): number {
  */
 export async function getGitHubLicenseScore(owner: string, name: string): Promise<number> {
     const license = await getGitHubLicense(owner, name);
+    console.log(license);
     if (license === null) {
       logMessage('ERROR', 'No license information found');
       return 0;
