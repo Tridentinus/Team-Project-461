@@ -6,7 +6,7 @@ if [ "$1" == "install" ]; then
   npm install
   npm run build
   if [ $? -eq 0 ]; then
-    echo "Instal succeeded"
+    echo "Install succeeded"
     exit 0
   else
     echo "Install failed"
@@ -15,13 +15,30 @@ if [ "$1" == "install" ]; then
 fi
 
 if [ "$1" == "test" ]; then
-  npm run test
-  if [ $? -eq 0 ]; then
-    exit 0
-  else
+  # Run the tests and generate a coverage report, capturing output
+  OUTPUT=$(npx vitest run --coverage)
+
+  # Check the exit code of the test command
+  if [ $? -ne 0 ]; then
     echo "Tests failed"
     exit 1
   fi
+
+  # Extract the number of tests passed and total tests
+  TEST_PASSED=$(echo "$OUTPUT" | grep 'Tests' | awk '{print $2}')
+  TEST_RUN=$(echo "$OUTPUT" | grep 'Tests' | awk -F'[()]' '{print $2}')
+
+  
+  # Extract line coverage percentage
+  COVERAGE_PERCENT=$(echo "$OUTPUT" | grep 'All files' | awk '{print $10}')
+
+  # Check if the coverage is below 80%
+
+  # Output the results in the specified format
+  echo "$TEST_PASSED/$TEST_RUN test cases passed. $COVERAGE_PERCENT% line coverage achieved."
+
+  exit 0
 fi
 
+# Handle other cases
 node dist/index.js "$1"
