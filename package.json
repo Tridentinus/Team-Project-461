@@ -8,11 +8,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsc",
-    "package:linux": "pkg dist/index.js --targets node18-linux-x64 --output dist/run",
-    "package:win": "pkg dist/index.js --targets node18-win-x64 --output dist/run",
-    "package:macos": "pkg dist/index.js --targets node18-macos-x64 --output dist/run",
     "test": "npx vitest run --coverage",
-    "fetch": "node dist/fetch.js",
     "clean:logs": "node dist/clearLog.js"
   },
   "keywords": [],
@@ -37,13 +33,10 @@
   },
   "dependencies": {
     "axios": "^1.7.7",
-    "babel": "^6.23.0",
     "dotenv": "^16.4.5",
     "fs": "^0.0.1-security",
     "graphql-request": "^7.1.0",
     "jsdom": "^25.0.0",
-    "minimist": "^1.2.8",
-    "pkg": "^5.8.1",
-    "simple-git": "^3.26.0"
+    "minimist": "^1.2.8"
   }
 }
