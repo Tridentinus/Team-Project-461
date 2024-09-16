@@ -2,13 +2,14 @@
 
 # Check if the argument is 'install'
 if [ "$1" == "install" ]; then
-  echo "Installing dependencies..."
+  echo "Installing.."
   npm install
+  npm run build
   if [ $? -eq 0 ]; then
-    echo "Dependencies installed successfully."
+    echo "Instal succeeded"
     exit 0
   else
-    echo "Failed to install dependencies."
+    echo "Install failed"
     exit 1
   fi
 fi
@@ -18,7 +19,7 @@ if [ "$1" == "test" ]; then
   if [ $? -eq 0 ]; then
     exit 0
   else
-    echo "Tests failed."
+    echo "Tests failed"
     exit 1
   fi
 fi
