@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables
 
 // TODO: Add GitHub token as a secret on the repository. Then remove the default value.
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || 'dummyToken';
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 const LOG_FILE = process.env.LOG_FILE || 'myLog.log';
 const LOG_LEVEL = process.env.LOG_LEVEL || 'INFO';
 
