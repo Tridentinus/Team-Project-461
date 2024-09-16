@@ -1,9 +1,7 @@
 import { getGitHubScores, getNpmScores } from './score.js';
 import { parseGitHubUrl, parseNpmUrl, getUrlsFromFile, getLinkType, logMessage, npmToGitHub } from './utils.js';
 import { exec } from 'child_process';
-import { analyzeUrl } from './analyzeUrl.js';
 import * as dotenv from 'dotenv';
-import { GITHUB_TOKEN } from './config.js';
 dotenv.config();  // Load environment variables
 
 // Function to handle process termination with logging

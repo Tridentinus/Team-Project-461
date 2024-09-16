@@ -11,7 +11,19 @@ if [ "$1" == "install" ]; then
     echo "Failed to install dependencies."
     exit 1
   fi
-else
-  echo "Usage: ./run install"
-  exit 1
 fi
+
+if [ "$1" == "test" ]; then
+  echo "Running tests..."
+  npm run test
+  if [ $? -eq 0 ]; then
+    echo "Running tests ..."
+    exit 0
+  else
+    echo "Tests failed."
+    exit 1
+  fi
+fi
+
+echo "Running tests..."
+node dist/index.js "$1"
