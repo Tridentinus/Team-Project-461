@@ -3,31 +3,31 @@ export async function measureConcurrentLatencies(
     owner: string,
     repo: string
 ): Promise<{ latencies: number[], results: (number | null)[], errors: (any | null)[] }> {
-    const latencies: number[] = [];
-    const results: (number | null)[] = [];
-    const errors: (any | null)[] = [];
+    const latencies: number[] = new Array(fns.length);
+    const results: (number | null)[] = new Array(fns.length);
+    const errors: (any | null)[] = new Array(fns.length);
 
     // Create an array of promises to track each function call's latency
-    const promises = fns.map(async (fn) => {
+    const promises = fns.map((fn, index) => (async () => {
         const start = performance.now();
         try {
             const result = await fn(owner, repo);
             const end = performance.now();
-            const seconds_elapsed = Number(((end - start) / 1000).toFixed(3));
-            latencies.push(seconds_elapsed);
-            results.push(result);  // Store result (a number between 0 and 1)
-            errors.push(null);     // No error
+            const seconds_elapsed = Number((end - start) / 1000);
+            latencies[index] = seconds_elapsed;   // Assign to the correct index
+            results[index] = result;          // Assign to the correct index
+            errors[index] = null;             // No error
         } catch (error) {
             const end = performance.now();
-            const seconds_elapsed = Number(((end - start) / 1000).toFixed(3));
-            latencies.push(seconds_elapsed);
-            results.push(null);    // No result in case of error
-            errors.push(error);    // Capture error
+            const seconds_elapsed = Number((end - start) / 1000);
+            latencies[index] = seconds_elapsed;   // Assign to the correct index
+            results[index] = null;            // No result in case of error
+            errors[index] = error;            // Capture error
         }
-    });
+    })());
 
     // Wait for all promises to settle
-    await Promise.allSettled(promises);
+    await Promise.all(promises);
 
     return { latencies, results, errors };
 }

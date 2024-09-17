@@ -11,10 +11,11 @@ export async function getGitHubScores(owner: string, repo: string): Promise<stri
   
   // const responsiveMaintainer = results[0] ?? 0;
   // const responsiveMaintainerLatency = latencies[0];
-  const license = results[0] ?? 0;
-  const licenseLatency = latencies[0];
-  const busFactor = results[1] ?? 0;
-  const busFactorLatency = latencies[1];
+
+  const busFactor = results[0] ?? 0;
+  const busFactorLatency = latencies[0];
+  const license = results[1] ?? 0;
+  const licenseLatency = latencies[1];
 
   //create array of weights for each metric
   const size = 3;
