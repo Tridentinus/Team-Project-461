@@ -1,4 +1,3 @@
-import { log } from "console";
 import { gitHubRequest, logMessage } from "./utils.js";
 import { gql } from 'graphql-request';
 
@@ -58,11 +57,9 @@ export async function getGitHubLicense(owner: string, name: string): Promise<str
     licenseContent = data.repository.licenseFile?.text || null;
   }
 
-
   // Extract license names from the README and LICENSE files
   const readmeLicense = extractLicenseFromText(readmeContent);
   const fileLicense = extractLicenseFromText(licenseContent);
-
 
   // License names to SPDX IDs
   const licenseMappings: { [key: string]: string } = {
@@ -103,7 +100,6 @@ export async function getGitHubLicense(owner: string, name: string): Promise<str
       'The Unlicense': 'Unlicense',
       'zLib License': 'Zlib'
   };
-
 
   // Log the SPDX ID if available, useful for debugging
   if (spdxId) {
