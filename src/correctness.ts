@@ -23,7 +23,7 @@ async function measureCorrectness(owner: string, repo: string, token: string): P
     const results = await eslint.lintFiles([`${repoDir}/**/*.{js,jsx,ts,tsx}`]);
 
     // Calculate score based on ESLint results
-    const totalProblems = results.reduce((sum, result) => sum + result.errorCount + result.warningCount, 0);
+    const totalProblems = results.reduce((sum: number, result: ESLint.LintResult) => sum + result.errorCount + result.warningCount, 0);
     const totalFiles = results.length;
     const eslintScore = Math.max(0, 1 - (totalProblems / (totalFiles * 10))); // Adjust the denominator as needed
 
