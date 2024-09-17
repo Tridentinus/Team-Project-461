@@ -1,56 +1,48 @@
 import { GraphQLClient } from 'graphql-request';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import fs from 'fs/promises';
+import path from 'path';
+import { ESLint } from 'eslint';
+
+const execAsync = promisify(exec);
 
 interface CorrectnessMetrics {
-  totalTests: number;
-  passingTests: number;
-  codeCoverage: number;
+  eslintScore: number;
 }
 
 async function measureCorrectness(owner: string, repo: string, token: string): Promise<CorrectnessMetrics> {
-  const client = new GraphQLClient('https://api.github.com/graphql', {
-    headers: { authorization: `Bearer ${token}` },
-  });
-
-  // GraphQL query to fetch repository data
-  const query = `
-    query($owner: String!, $repo: String!) {
-      repository(owner: $owner, name: $repo) {
-        object(expression: "HEAD") {
-          ... on Commit {
-            history(first: 1) {
-              nodes {
-                status {
-                  state
-                  contexts {
-                    state
-                    context
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  `;
+  const repoDir = path.join(process.cwd(), 'correctness_repo');
 
   try {
-    const data = await client.request(query, { owner, repo });
-    // Process the data to extract test and coverage information
-    // This is a simplified example and may need to be adjusted based on actual data structure
-    const status = data.repository.object.history.nodes[0].status;
-    
-    // TODO: Implement logic to calculate totalTests, passingTests, and codeCoverage
-    // This will depend on how the repository structures its test results and coverage reports
+    // Clone the repository
+    await execAsync(`git clone https://github.com/${owner}/${repo}.git ${repoDir}`);
+
+    // Run ESLint
+    const eslint = new ESLint();
+    const results = await eslint.lintFiles([`${repoDir}/**/*.{js,jsx,ts,tsx}`]);
+
+    // Calculate score based on ESLint results
+    const totalProblems = results.reduce((sum, result) => sum + result.errorCount + result.warningCount, 0);
+    const totalFiles = results.length;
+    const eslintScore = Math.max(0, 1 - (totalProblems / (totalFiles * 10))); // Adjust the denominator as needed
 
     return {
-      totalTests: 0, // Replace with actual calculation
-      passingTests: 0, // Replace with actual calculation
-      codeCoverage: 0, // Replace with actual calculation
+      eslintScore: Number(eslintScore.toFixed(2)),
     };
   } catch (error) {
-    console.error('Error fetching correctness metrics:', error);
-    throw error;
+    console.error('Error measuring correctness:', error);
+    if (error instanceof Error && error.message.includes('git clone')) {
+      throw new Error(`Error measuring correctness: Clone failed - ${error.message}`);
+    }
+    throw new Error(`Error measuring correctness: ${error instanceof Error ? error.message : String(error)}`);
+  } finally {
+    // Clean up: delete the cloned repository
+    try {
+      await fs.rm(repoDir, { recursive: true, force: true });
+    } catch (error) {
+      console.error('Error deleting cloned repository:', error);
+    }
   }
 }
 
