@@ -8,7 +8,6 @@ const SCORE_THRESHOLD = 0; // Default score when no documentation is found
 
 interface RampUpScore {
     documentationScore: number;
-    dependenciesScore: number;
 }
 
 interface ReadmeResponse {
@@ -54,27 +53,13 @@ export async function getDocumentationScore(repoOwner: string, repoName: string)
     }
 }
 
-// 2. Analyze Dependencies (fewer dependencies == better)
-export async function getDependenciesScore(repoPath: string): Promise<number> {
-    try {
-        const packageJson = require(`${repoPath}/package.json`);
-        const dependenciesCount = Object.keys(packageJson.dependencies || {}).length;
-        return dependenciesCount < 10 ? 1 : (10 / dependenciesCount); // Fewer dependencies = higher score
-    } catch (err) {
-        logMessage('ERROR', `Error reading package.json for ${repoPath}`);
-        return 0;
-    }
-}
-
 
 // Main function to calculate the overall Ramp-Up Time Score
 export async function calculateRampUpScore(owner: string, name: string, repoPath: string): Promise<RampUpScore> {
 
     const documentationScore = await getDocumentationScore(owner, name);
-    const dependenciesScore = await getDependenciesScore(repoPath);
 
     return {
         documentationScore,
-        dependenciesScore
     };
 }
