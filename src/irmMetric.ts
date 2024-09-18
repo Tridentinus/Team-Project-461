@@ -8,7 +8,7 @@ dotenv.config();  // Load environment variables
 
 // GraphQL endpoint
 const endpoint = 'https://api.github.com/graphql';
-export const maxResponseTime = 7 * 24 * 60; // 7 days in minutes
+export const maxResponseTime = 4 * 7 * 24 * 60; // 7 days in minutes
 
 type IssueNode = {
     node: {
