@@ -145,6 +145,12 @@ export function calculateBusFactor(contributors: CommitNode[]): number {
     return busFactor;
   }
   
+  // Function to fetch contributors for a GitHub repository
+// Arguments: owner (string), repo (string), token (string)
+// Returns: Promise<any[]>
+
+
+
   export async function fetchYearContributors(owner: string, repo: string, token: string): Promise<any[]> {
     const endpoint = `https://api.github.com/repos/${owner}/${repo}/contributors`;
   

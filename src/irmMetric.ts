@@ -92,6 +92,11 @@ export function calculateIRM(issues: IssueNode[]) {
       totalResponseTime += responseTime;
       issueCount++;
     }
+    //else add the maxResponseTime
+    else{
+      totalResponseTime += maxResponseTime;
+      issueCount++;
+    }
   });
 
   const averageResponseTime = issueCount > 0 ? totalResponseTime / issueCount : 0;
