@@ -40,6 +40,5 @@ export async function getScores(owner: string, repo: string): Promise<string> {
     "License": license,
     "License_Latency": licenseLatency
   };
-
   return JSON.stringify(output).replace(/,/g, ', ');
 }
