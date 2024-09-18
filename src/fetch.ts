@@ -39,7 +39,7 @@ if (!owner || !name) {
     console.log(`Fetching contributors for ${owner}/${name}...`);
 
     // Pass token along with owner and repo name
-    const contributors = await fetchRepoContributors(owner, name, token);
+    const contributors = await fetchRepoContributors(owner, name);
 
     if (contributors) {
       const busFactor = calculateBusFactor(contributors);

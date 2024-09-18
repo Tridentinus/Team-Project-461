@@ -3,12 +3,13 @@ import { logMessage } from './utils.js';
 import * as dotenv from 'dotenv';
 import { differenceInMinutes, parseISO } from 'date-fns';
 import { log } from 'console';
+import { GITHUB_TOKEN } from './config.js';
 
 dotenv.config();  // Load environment variables
 
 // GraphQL endpoint
 const endpoint = 'https://api.github.com/graphql';
-export const maxResponseTime = 7 * 24 * 60; // 7 days in minutes
+export const maxResponseTime = 4 * 7 * 24 * 60; // 7 days in minutes
 
 type IssueNode = {
     node: {
@@ -31,10 +32,10 @@ type RepoIssuesResponse = {
 };
 
 // Function to fetch repository issues with dynamic GitHub token
-export async function fetchRepoIssues(owner: string, name: string, token: string) {
+export async function fetchRepoIssues(owner: string, name: string) {
     const client = new GraphQLClient(endpoint, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
       },
     });
   
@@ -92,6 +93,11 @@ export function calculateIRM(issues: IssueNode[]) {
       totalResponseTime += responseTime;
       issueCount++;
     }
+    //else add the maxResponseTime
+    else{
+      totalResponseTime += maxResponseTime;
+      issueCount++;
+    }
   });
 
   const averageResponseTime = issueCount > 0 ? totalResponseTime / issueCount : 0;
@@ -108,4 +114,9 @@ export function normalizeIRM (averageResponseTime: number, maxResponseTime: numb
   const clampedResponseTime = Math.min(averageResponseTime, maxResponseTime);
   logMessage('INFO', `Clamped Response Time: ${clampedResponseTime} minutes`);
   return 1 - clampedResponseTime / maxResponseTime;
+}
+
+export async function getIRM(owner: string, repo: string): Promise<number> {
+  const issues = await fetchRepoIssues(owner, repo);
+  return calculateIRM(issues);
 }

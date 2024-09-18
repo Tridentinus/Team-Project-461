@@ -17,7 +17,7 @@ describe('IRM Metric Calculation', () => {
       { node: { createdAt: '2024-09-01T00:00:00Z', comments: { nodes: [] }, closedAt: null } },
     ];
     const irm = calculateIRM(issues);
-    expect(irm).toBe(normalizeIRM(0, maxResponseTime));
+    expect(irm).toBe(normalizeIRM(maxResponseTime, maxResponseTime));
   });
 
   it('should normalize IRM to a score between 0 and 1', () => {

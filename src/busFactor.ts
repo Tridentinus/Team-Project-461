@@ -2,7 +2,7 @@ import { GraphQLClient } from 'graphql-request';
 import { logMessage } from './utils.js';
 import dotenv from 'dotenv';
 import axios from 'axios';
-
+import { GITHUB_TOKEN } from './config.js';
 
 
 dotenv.config();  // Load environment variables
@@ -45,10 +45,10 @@ type CommitNode = {
 // Returns: Promise<void>
 
 //how it works: fetches the repository data from the owner and name provided
-export async function fetchRepoContributors(owner: string, name: string, token: string): Promise<CommitNode[]> {
+export async function fetchRepoContributors(owner: string, name: string): Promise<CommitNode[]> {
   const client = new GraphQLClient(endpoint, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
     },
   });
 
@@ -145,6 +145,12 @@ export function calculateBusFactor(contributors: CommitNode[]): number {
     return busFactor;
   }
   
+  // Function to fetch contributors for a GitHub repository
+// Arguments: owner (string), repo (string), token (string)
+// Returns: Promise<any[]>
+
+
+
   export async function fetchYearContributors(owner: string, repo: string, token: string): Promise<any[]> {
     const endpoint = `https://api.github.com/repos/${owner}/${repo}/contributors`;
   
@@ -212,4 +218,11 @@ export function calculateYearBusFactor(contributors: any[]): number {
   }
 
   return busFactor;
+}
+
+export async function getBusFactorScore(owner: string, repo: string): Promise<number> {
+  const contributors = await fetchRepoContributors(owner, repo);
+  const busFactor = calculateBusFactor(contributors);
+  const score = Math.min(busFactor / 5, 1);
+  return score;
 }
