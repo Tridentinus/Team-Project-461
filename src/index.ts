@@ -1,4 +1,4 @@
-import { getGitHubScores, getNpmScores } from './score.js';
+import { getScores } from './score.js';
 import { parseGitHubUrl, parseNpmUrl, getUrlsFromFile, getLinkType, logMessage, npmToGitHub } from './utils.js';
 import { exec } from 'child_process';
 import * as dotenv from 'dotenv';
@@ -76,8 +76,8 @@ if (args.length !== 1) {
         logMessage('INFO', message);
       }
       else {
-        const output = await getNpmScores(npmName);
-        console.log(output);
+        logMessage('ERROR', `GitHub repository not found for npm package: ${npmName}`);
+        process.exit(1);
       }
     }
 
@@ -93,7 +93,7 @@ if (args.length !== 1) {
         process.exit(1);
       }
 
-      const output = await getGitHubScores(owner, repo);
+      const output = await getScores(owner, repo);
       console.log(output);
     }
   }

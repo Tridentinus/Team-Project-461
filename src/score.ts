@@ -1,10 +1,10 @@
-import { getGitHubLicenseScore, getNpmLicenseScore } from "./license.js";
+import { isLicenseCompatible } from "./license.js";
 import { calculateBusFactor, fetchRepoContributors } from "./busFactor.js";
 import { GITHUB_TOKEN } from "./config.js";
 import { fetchRepoIssues, calculateIRM } from "./irmMetric.js";
 
-export async function getGitHubScores(owner: string, repo: string): Promise<string> {
-  const licenseScore = await getGitHubLicenseScore(owner, repo);
+export async function getScores(owner: string, repo: string): Promise<string> {
+  const licenseScore = await isLicenseCompatible(owner, repo);
   const contributors = await fetchRepoContributors(owner, repo, GITHUB_TOKEN);
   const busFactor = calculateBusFactor(contributors);
   const issues = await fetchRepoIssues(owner, repo, GITHUB_TOKEN);
@@ -24,18 +24,6 @@ export async function getGitHubScores(owner: string, repo: string): Promise<stri
     "BusFactor": busFactor,
     "License": licenseScore,
     "IRM": irm
-  };
-
-  return JSON.stringify(output).replace(/,/g, ', ');
-}
-
-export async function getNpmScores(packageName: string): Promise<string> {
-  const licenseScore = await getNpmLicenseScore(packageName);
-  const netScore = licenseScore;
-
-  const output = {
-    "NetScore": netScore,
-    "License": licenseScore
   };
 
   return JSON.stringify(output).replace(/,/g, ', ');

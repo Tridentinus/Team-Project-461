@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as fs from 'fs';
 import { fetchYearContributors, calculateYearBusFactor} from './busFactor.js';
-import { getGitHubLicense, isLicenseCompatible, getGitHubLicenseScore } from './license.js';
+import { isLicenseCompatible} from './license.js';
 import { GITHUB_TOKEN } from './config.js';
 import { getUrlsFromFile } from './utils.js';
 
@@ -150,22 +150,6 @@ async function analyzeRepository(owner: string, repo: string, token: string) {
     logMessage('ERROR', errorMessage);
     console.error(errorMessage);
   }
-  // return license score
-  const license = await getGitHubLicense(owner, repo);
-  logMessage('INFO', `License for ${owner}/${repo}: ${license}`);
-  console.log(`License for ${owner}/${repo}: ${license}`);
-
-  //check if license is compatible
-  const compatibility = isLicenseCompatible(license as string);
-  if (compatibility === 1) {
-    logMessage('INFO', `License is compatible with LGPLv2.1`);
-    console.log(`License is compatible with LGPLv2.1`);
-  }
-  else {
-    logMessage('INFO', `License is not compatible with LGPLv2.1`);
-    console.log(`License is not compatible with LGPLv2.1`);
-  }
- 
 }
 
 // Function to process URLs from the file
