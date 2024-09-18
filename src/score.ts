@@ -40,7 +40,6 @@ export async function getGitHubScores(owner: string, repo: string): Promise<stri
     "License": license,
     "License_Latency": licenseLatency
   };
-
   return JSON.stringify(output).replace(/,/g, ', ');
 }
 
