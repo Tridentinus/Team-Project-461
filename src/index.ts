@@ -1,4 +1,4 @@
-import { getGitHubScores, getNpmScores } from "./score.js";
+import { getScores } from "./score.js";
 import { parseGitHubUrl, parseNpmUrl, getUrlsFromFile, getLinkType, logMessage, npmToGitHub } from "./utils.js";
 
 // Main CLI logic
@@ -37,7 +37,8 @@ for (const url of urlArray) {
       ({ owner, repo } = repoInfo);
       logMessage("INFO", `GitHub repository found for npm package: ${owner}/${repo}`);
     } else {
-      output = await getNpmScores(packageName);
+      logMessage("ERROR", `No GitHub repository found for npm package: ${owner}/${repo}`);
+      process.exit(1);
     }
   } else if (linkType === "GitHub") {
     ({ owner, repo } = parseGitHubUrl(url) || { owner: null, repo: null });
@@ -49,7 +50,7 @@ for (const url of urlArray) {
   }
 
   if (!output) {
-    output = await getGitHubScores(owner, repo);
+    output = await getScores(owner, repo);
   }
 
   console.log(output);
