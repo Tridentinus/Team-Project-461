@@ -1,13 +1,13 @@
-import { getGitHubLicenseScore, getNpmLicenseScore } from "./license.js";
+import { isLicenseCompatible } from "./license.js";
 import { getBusFactorScore } from "./busFactor.js";
 import { getIRM } from "./irmMetric.js";
 import { measureConcurrentLatencies } from "./latency.js";
 
-export async function getGitHubScores(owner: string, repo: string): Promise<string> {
+export async function getScores(owner: string, repo: string): Promise<string> {
   // const issues = await fetchRepoIssues(owner, repo);
   // const irm = calculateIRM(issues);
 
-  const { latencies, results, errors } = await measureConcurrentLatencies([getBusFactorScore, getGitHubLicenseScore], owner, repo);
+  const { latencies, results, errors } = await measureConcurrentLatencies([getBusFactorScore, isLicenseCompatible], owner, repo);
   
   // const responsiveMaintainer = results[0] ?? 0;
   // const responsiveMaintainerLatency = latencies[0];
@@ -40,6 +40,7 @@ export async function getGitHubScores(owner: string, repo: string): Promise<stri
     "License": license,
     "License_Latency": licenseLatency
   };
+<<<<<<< HEAD
   return JSON.stringify(output).replace(/,/g, ', ');
 }
 
@@ -52,5 +53,7 @@ export async function getNpmScores(packageName: string): Promise<string> {
     "License": licenseScore
   };
 
+=======
+>>>>>>> main
   return JSON.stringify(output).replace(/,/g, ', ');
 }
