@@ -127,7 +127,7 @@ export async function gitHubRequest<TVariables extends object | undefined>(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${GITHUB_TOKEN}`, // Use the provided token instead of process.env.GITHUB_TOKEN
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
     },
   });
 

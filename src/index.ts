@@ -6,6 +6,7 @@ const args = process.argv.slice(2);
 
 if (args.length !== 1) {
   logMessage("ERROR", "Incorrect number of arguments provided");
+  console.log('Incorrect number of args')
   process.exit(1);
 }
 
@@ -42,6 +43,7 @@ for (const url of urlArray) {
     }
   } else if (linkType === "GitHub") {
     ({ owner, repo } = parseGitHubUrl(url) || { owner: null, repo: null });
+    logMessage("INFO", `GitHub owner and repo extracted from GitHub link: ${owner}/${repo}`);
   }
 
   if (!owner || !repo) {
@@ -49,9 +51,8 @@ for (const url of urlArray) {
     process.exit(1);
   }
 
-  if (!output) {
-    output = await getScores(owner, repo);
-  }
+
+  output = await getScores(owner, repo);
 
   console.log(output);
 }
