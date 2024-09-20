@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { GraphQLClient } from 'graphql-request';
+import { expect } from 'vitest';
 dotenv.config(); // Load environment variables
 
 // TODO: Add GitHub token as a secret on the repository. Then remove the default value.
@@ -12,11 +13,10 @@ if (!GITHUB_TOKEN) {
 }
 
 // Validate the GitHub token
-await validateGitHubToken(GITHUB_TOKEN).then(isValid => {
-    if (!isValid) {
-        throw new Error('Invalid GitHub token');
-    }
-});
+const isValid = await validateGitHubToken(GITHUB_TOKEN);
+if (!isValid) {
+    throw new Error('Invalid GitHub token');
+}
 
 export { GITHUB_TOKEN, LOG_FILE, LOG_LEVEL };
 
@@ -45,11 +45,13 @@ export async function validateGitHubToken(token: string): Promise<boolean> {
       }
 
       const data: GitHubViewerResponse = await client.request(query);
-      console.log(`GitHub token is valid for user: ${data.viewer.login}`);
-      return true;
-    } catch (error) {
-      console.error('Invalid GitHub token',token );
-      return false;
+      //check error to see if the token is valid (err: "Bad credentials")
+        return true;
     }
-  }
-  
+    catch (error) {
+      if ((error as Error).message.includes('Bad credentials')) {
+        return false;
+      }
+        throw error;//throw error if it is not a bad credentials error
+    }
+    }
