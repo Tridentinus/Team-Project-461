@@ -40,20 +40,5 @@ export async function getScores(owner: string, repo: string): Promise<string> {
     "License": license,
     "License_Latency": licenseLatency
   };
-<<<<<<< HEAD
-  return JSON.stringify(output).replace(/,/g, ', ');
-}
-
-export async function getNpmScores(packageName: string): Promise<string> {
-  const licenseScore = await getNpmLicenseScore(packageName);
-  const netScore = licenseScore;
-
-  const output = {
-    "NetScore": netScore,
-    "License": licenseScore
-  };
-
-=======
->>>>>>> main
   return JSON.stringify(output).replace(/,/g, ', ');
 }

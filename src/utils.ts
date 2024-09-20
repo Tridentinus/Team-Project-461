@@ -175,30 +175,3 @@ export async function npmToGitHub(packageName: string): Promise<{owner: string, 
   }
   return null;
 }
-
-
-export async function validateGitHubToken(token: string): Promise<boolean> {
-  const client = new GraphQLClient('https://api.github.com/graphql', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  const query = `
-    query {
-      viewer {
-        login
-      }
-    }
-  `;
-
-  try {
-    // Try making a simple request to GitHub's API to check the token
-    const data = await client.request(query);
-    console.log(`GitHub token is valid for user: ${data.viewer.login}`);
-    return true;
-  } catch (error) {
-    console.error('Invalid GitHub token.');
-    return false;
-  }
-}
