@@ -13,13 +13,13 @@ export async function measureConcurrentLatencies(
         try {
             const result = await fn(owner, repo);
             const end = performance.now();
-            const seconds_elapsed = Number((end - start) / 1000);
+            const seconds_elapsed = Number(((end - start) / 1000).toFixed(3));
             latencies[index] = seconds_elapsed;   // Assign to the correct index
             results[index] = result;          // Assign to the correct index
             errors[index] = null;             // No error
         } catch (error) {
             const end = performance.now();
-            const seconds_elapsed = Number((end - start) / 1000);
+            const seconds_elapsed = Number(((end - start) / 1000).toFixed(3));
             latencies[index] = seconds_elapsed;   // Assign to the correct index
             results[index] = null;            // No result in case of error
             errors[index] = error;            // Capture error

@@ -3,7 +3,6 @@ import { GITHUB_TOKEN, LOG_FILE } from "./config.js";
 import dotenv from "dotenv";
 import * as fs from "fs";
 import axios from "axios";
-import { log } from "console";
 
 dotenv.config(); // Load environment variables
 
@@ -14,8 +13,8 @@ dotenv.config(); // Load environment variables
  * @returns The type of the link. Possible values are "GitHub", "npm", or "Unknown".
  */
 export function getLinkType(link: string): string {
-  const githubRegex = /^https?:\/\/(www\.)?github\.com\//;
-  const npmRegex = /^https?:\/\/(www\.)?npmjs\.com\//;
+  const githubRegex = /^(https?:\/\/)?(www\.)?github\.com\/([^\/]+)\/([^\/]+)/;
+  const npmRegex = /^(https?:\/\/)?(www\.)?npmjs\.com\/package\/[^/]+/;
 
   if (githubRegex.test(link)) {
     return "GitHub";
@@ -31,15 +30,14 @@ export function getLinkType(link: string): string {
  * @param repoLink - The link to the GitHub repository.
  * @returns An object containing the owner and name of the repository, or null if the link is invalid.
  */
-export function parseGitHubUrl(
-  repoLink: string
-): { owner: string; repo: string } | null {
-  const regex = /https:\/\/github\.com\/([^\/]+)\/([^\/]+)/;
+export function parseGitHubUrl( repoLink: string): { owner: string; repo: string } | null {
+  // More flexible regex to handle http(s), www, and valid GitHub URLs
+  const regex = /^(https?:\/\/)?(www\.)?github\.com\/([^\/]+)\/([^\/]+)/;
   const match = repoLink.match(regex);
 
-  if (match && match.length === 3) {
-    const owner = match[1];
-    const repo = match[2];
+  if (match && match.length >= 5) {
+    const owner = match[3]; // The owner is captured in group 3
+    const repo = match[4];  // The repository is captured in group 4
     return { owner, repo };
   } else {
     logMessage("ERROR", "Invalid GitHub repository link.");
@@ -54,14 +52,19 @@ export function parseGitHubUrl(
  * @returns The module name extracted from the link, or null if the link is invalid.
  */
 export function parseNpmUrl(link: string): string | null {
-  // Define a regular expression to match npmjs.com URLs and capture the module name
-  const npmRegex = /^https?:\/\/(?:www\.)?npmjs\.com\/package\/([^\/]+)/;
+  // Flexible regex to capture the package name from npm URLs
+  const npmRegex = /^(https?:\/\/)?(www\.)?npmjs\.com\/package\/([^\/]+)/;
 
   // Match the URL against the regular expression
   const match = link.match(npmRegex);
 
-  // Return the captured module name if found, otherwise return null
-  return match ? match[1] : null;
+  // Return the captured package name if found, otherwise return null
+  if (match && match[3]) {
+    return match[3]; // match[3] is the package name captured by the third group
+  } else {
+    logMessage("ERROR", "Invalid npm package link.");
+    return null;
+  }
 }
 
 /**
@@ -127,7 +130,7 @@ export async function gitHubRequest<TVariables extends object | undefined>(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${GITHUB_TOKEN}`, // Use the provided token instead of process.env.GITHUB_TOKEN
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
     },
   });
 

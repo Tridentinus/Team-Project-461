@@ -17,9 +17,10 @@ fi
 if [ "$1" == "test" ]; then
   # Run the tests and generate a coverage report, capturing output
   OUTPUT=$(npx vitest run --coverage)
+  VITEST_EXIT_CODE=$?
 
   # Check the exit code of the test command
-  if [ $? -ne 0 ]; then
+  if [ $VITEST_EXIT_CODE -ne 0 ]; then
     echo "Tests failed"
     exit 1
   fi
@@ -32,10 +33,11 @@ if [ "$1" == "test" ]; then
   # Extract line coverage percentage
   COVERAGE_PERCENT=$(echo "$OUTPUT" | grep 'All files' | awk '{print $10}')
 
-  # Check if the coverage is below 80%
+  # Round the coverage percentage to the nearest whole number
+  COVERAGE_ROUNDED=$(printf "%.0f" "$COVERAGE_PERCENT")
 
   # Output the results in the specified format
-  echo "$TEST_PASSED/$TEST_RUN test cases passed. $COVERAGE_PERCENT% line coverage achieved."
+  echo "$TEST_PASSED/$TEST_RUN test cases passed. $COVERAGE_ROUNDED% line coverage achieved."
 
   exit 0
 fi
