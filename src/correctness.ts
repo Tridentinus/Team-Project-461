@@ -2,9 +2,9 @@ import { GraphQLClient } from 'graphql-request';
 import fs from 'fs/promises';
 import path from 'path';
 import { ESLint } from 'eslint';
-import simpleGit from 'simple-git';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { simpleGit, SimpleGit, CleanOptions } from 'simple-git';
 
 interface CorrectnessMetrics {
   eslintScore: number;
@@ -16,7 +16,7 @@ async function measureCorrectness(owner: string, repo: string, token: string): P
   try {
     console.log(`Attempting to clone repository: ${owner}/${repo} into ${repoDir}`);
     
-    const git = simpleGit({ baseDir: process.cwd() });
+    const git: SimpleGit = simpleGit().clean(CleanOptions.FORCE);
     
     // Clone the repository
     const repoUrl = `https://github.com/${owner}/${repo}.git`;
@@ -36,17 +36,10 @@ async function measureCorrectness(owner: string, repo: string, token: string): P
 
     console.log('Initializing ESLint');
     // Run ESLint with a basic configuration
-    const eslint = new ESLint({
-      overrideConfig: {
-        extends: ['eslint:recommended'],
-        parserOptions: {
-          ecmaVersion: 2021,
-          sourceType: 'module',
-        },
-      },
-    });
+    const eslint = new ESLint();
     console.log(`Linting files in ${repoDir}`);
-    const results = await eslint.lintFiles([`${repoDir}/**/*.{js,jsx,ts,tsx}`]);
+    const results = await eslint.lintFiles([path.join(repoDir, 'src', 'license.ts')]);
+    // const results = await eslint.lintFiles([`C:\\Users\\rtjor\\OneDrive - purdue.edu\\Documents\\Courses\\Fall 2024\\ECE 461\\Team-Project-461\\correctness_repo\\src\\license.ts`]);
     console.log('ESLint results:', JSON.stringify(results, null, 2));
 
     if (!results || results.length === 0) {
@@ -75,3 +68,5 @@ async function measureCorrectness(owner: string, repo: string, token: string): P
 }
 
 export { measureCorrectness, CorrectnessMetrics };
+
+measureCorrectness('Tridentinus', 'Team-Project-461', '');

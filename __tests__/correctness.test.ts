@@ -97,13 +97,13 @@ describe('Real Integration test: measureCorrectness', () => {
       throw error;
     } finally {
       // Clean up: delete the contents of the cloned repository
-      const repoDir = path.join(process.cwd(), 'correctness_repo');
-      try {
-        await fs.rm(repoDir, { recursive: true, force: true });
-        console.log('Cleanup completed');
-      } catch (error) {
-        console.error('Error cleaning up repository contents:', error);
-      }
+      // const repoDir = path.join(process.cwd(), 'correctness_repo');
+      // try {
+      //   await fs.rm(repoDir, { recursive: true, force: true });
+      //   console.log('Cleanup completed');
+      // } catch (error) {
+      //   console.error('Error cleaning up repository contents:', error);
+      // }
     }
   }, 300000); // Increase timeout to 5 minutes for real cloning and analysis
 });
