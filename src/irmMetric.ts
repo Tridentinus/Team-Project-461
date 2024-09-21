@@ -9,7 +9,7 @@ dotenv.config();  // Load environment variables
 
 // GraphQL endpoint
 const endpoint = 'https://api.github.com/graphql';
-export const maxResponseTime = 4 * 7 * 24 * 60; // 7 days in minutes
+export const maxResponseTime = 4 * 7 * 24 * 60; // 28 days in minutes
 
 type IssueNode = {
     node: {
@@ -113,10 +113,13 @@ export function normalizeIRM (averageResponseTime: number, maxResponseTime: numb
   // Clamp response time to maxResponseTime and normalize between 0 and 1
   const clampedResponseTime = Math.min(averageResponseTime, maxResponseTime);
   logMessage('INFO', `Clamped Response Time: ${clampedResponseTime} minutes`);
+  logMessage('INFO', `Normalized IRM Score: ${1 - clampedResponseTime / maxResponseTime}`);
   return 1 - clampedResponseTime / maxResponseTime;
+  
 }
 
 export async function getIRM(owner: string, repo: string): Promise<number> {
-  const issues = await fetchRepoIssues(owner, repo);
+  const issues = await fetchRepoIssues(owner, repo);;
   return calculateIRM(issues);
+  
 }
