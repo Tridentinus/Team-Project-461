@@ -3,7 +3,14 @@ import { getBusFactorScore } from "./busFactor.js";
 import { getIRM } from "./irmMetric.js";
 import { measureConcurrentLatencies } from "./latency.js";
 
-export async function getScores(owner: string, repo: string): Promise<string> {
+interface score {
+  id: number;
+  name: string;
+  active: boolean;
+}
+
+
+export async function getScores(owner: string, repo: string, url: string): Promise<string> {
   // const issues = await fetchRepoIssues(owner, repo);
   // const irm = calculateIRM(issues);
 
@@ -27,6 +34,7 @@ export async function getScores(owner: string, repo: string): Promise<string> {
   const netScore = 0.5 * license + 0.5 * busFactor;
 
   const output = {
+    "URL": url,
     "NetScore": netScore,
     "NetScore_Latency": -1,
     "RampUp": -1,
@@ -41,5 +49,5 @@ export async function getScores(owner: string, repo: string): Promise<string> {
     "License_Latency": licenseLatency
   };
 
-  return JSON.stringify(output).replace(/,/g, ', ');
+  return JSON.stringify(output);
 }

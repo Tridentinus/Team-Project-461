@@ -50,8 +50,7 @@ for (const url of urlArray) {
   }
 
   if (!output) {
-    output = await getScores(owner, repo);
+    output = await getScores(owner, repo, url);
   }
-
   console.log(output);
 }
