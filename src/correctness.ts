@@ -1,17 +1,36 @@
-import { GraphQLClient } from 'graphql-request';
 import fs from 'fs/promises';
 import path from 'path';
 import { ESLint } from 'eslint';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 import { simpleGit, SimpleGit, CleanOptions } from 'simple-git';
 
 interface CorrectnessMetrics {
   eslintScore: number;
 }
 
+async function cleanUp(repoDir: string): Promise<void> {
+  console.log(`Cleaning up ${repoDir}`);
+  try {
+    await fs.rm(repoDir, { recursive: true, force: true });
+    console.log('Cleanup completed');
+  } catch (error) {
+    console.error('Error cleaning up repository contents:', error);
+  }
+}
+
+async function ensureRepoDir(repoDir: string): Promise<void> {
+  try {
+    await fs.access(repoDir);
+    console.log(`${repoDir} exists, clearing contents...`);
+    await cleanUp(repoDir);
+  } catch {
+    console.log(`${repoDir} does not exist, creating directory...`);
+    await fs.mkdir(repoDir);
+  }
+}
+
 async function measureCorrectness(owner: string, repo: string, token: string): Promise<CorrectnessMetrics> {
   const repoDir = path.join(process.cwd(), 'correctness_repo');
+  await ensureRepoDir(repoDir);
 
   try {
     console.log(`Attempting to clone repository: ${owner}/${repo} into ${repoDir}`);
@@ -43,6 +62,7 @@ async function measureCorrectness(owner: string, repo: string, token: string): P
 
     if (!results || results.length === 0) {
       console.log('No linting results found');
+      await cleanUp(repoDir);
       return { eslintScore: 0 };
     }
     
@@ -54,11 +74,13 @@ async function measureCorrectness(owner: string, repo: string, token: string): P
     const eslintScore = Math.max(0, 1 - (totalProblems / (totalFiles * 10))); // Adjust the denominator as needed
 
     console.log(`Final ESLint score: ${eslintScore}`);
+    await cleanUp(repoDir);
     return {
       eslintScore: Number(eslintScore.toFixed(2)),
     };
   } catch (error) {
     console.error('Error measuring correctness:', error);
+    await cleanUp(repoDir);
     if (error instanceof Error && error.message.includes('clone')) {
       throw new Error(`Error measuring correctness: Clone failed - ${error.message}`);
     }
