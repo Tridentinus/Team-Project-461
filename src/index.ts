@@ -51,6 +51,6 @@ for (const url of urlArray) {
     process.exit(1);
   }
 
-  output = await getScores(owner, repo);
+  output = await getScores(owner, repo, url);
   console.log(output);
 }
