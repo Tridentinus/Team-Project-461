@@ -25,18 +25,5 @@ export default [
       '@typescript-eslint/no-unused-vars': 'warn',
       'no-console': 'off',
     },
-    // rules: {
-    //   semi: "error",
-    //   "prefer-const": "error",
-    // },
-    // extends: [
-    //   "eslint:recommended", // Use recommended rules from ESLint
-    //   "plugin:@typescript-eslint/recommended", // Use recommended rules from @typescript-eslint
-    // ],
-    // env: {
-    //   browser: true, // Enable browser globals
-    //   node: true, // Enable Node.js globals
-    //   es2021: true, // Enable ES2021 globals
-    // },
   },
 ];
