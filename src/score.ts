@@ -1,50 +1,41 @@
 import { isLicenseCompatible } from "./license.js";
 import { getBusFactorScore } from "./busFactor.js";
 import { getIRM } from "./irmMetric.js";
+import { calculateRampUpScore } from "./rampUpTime.js";
 import { measureConcurrentLatencies } from "./latency.js";
 
-interface score {
-  id: number;
-  name: string;
-  active: boolean;
-}
-
-
 export async function getScores(owner: string, repo: string, url: string): Promise<string> {
-  // const issues = await fetchRepoIssues(owner, repo);
-  // const irm = calculateIRM(issues);
 
-  const { latencies, results, errors } = await measureConcurrentLatencies([getBusFactorScore, isLicenseCompatible], owner, repo);
-  
-  // const responsiveMaintainer = results[0] ?? 0;
-  // const responsiveMaintainerLatency = latencies[0];
+  const { latencies, results, errors } = await measureConcurrentLatencies([calculateRampUpScore, getBusFactorScore, getIRM, isLicenseCompatible], owner, repo);
 
-  const busFactor = results[0] ?? 0;
-  const busFactorLatency = latencies[0];
-  const license = results[1] ?? 0;
-  const licenseLatency = latencies[1];
+  const rampUp = results[0] ?? 0;
+  const rampUpLatency = latencies[0];
 
-  //create array of weights for each metric
-  const size = 3;
-  //create array of weights = 1/size for each metric
-  const weights = new Array(size).fill(1 / size);
+  const busFactor = results[1] ?? 0;
+  const busFactorLatency = latencies[1];
 
-  //calculate the net score
-  // const netScore = licenseScore * weights[0] + busFactor * weights[1] + irm * weights[2]
-  const netScore = 0.5 * license + 0.5 * busFactor;
+  const responsiveMaintainer = results[2] ?? 0;
+  const responsiveMaintainerLatency = latencies[2];
+
+  const license = results[3] ?? 0;
+  const licenseLatency = latencies[3];
+
+  // calculate the net score and latency
+  const netScore = Number((0.1 * rampUp + 0.2 * responsiveMaintainer + 0.3 * busFactor + 0.4 * license).toFixed(3));
+  const netScoreLatency = Number((busFactorLatency + responsiveMaintainerLatency + licenseLatency).toFixed(3));
 
   const output = {
     "URL": url,
     "NetScore": netScore,
-    "NetScore_Latency": -1,
-    "RampUp": -1,
-    "RampUp_Latency": -1,
+    "NetScore_Latency": netScoreLatency,
+    "RampUp": rampUp,
+    "RampUp_Latency": rampUpLatency,
     "Correctness": -1,
     "Correctness_Latency": -1,
     "BusFactor": busFactor,
     "BusFactor_Latency": busFactorLatency,
-    "ResponsiveMaintainer": -1,
-    "ResponsiveMaintainer_Latency": -1,
+    "ResponsiveMaintainer": responsiveMaintainer,
+    "ResponsiveMaintainer_Latency": responsiveMaintainerLatency,
     "License": license,
     "License_Latency": licenseLatency
   };
