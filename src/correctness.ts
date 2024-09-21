@@ -38,8 +38,7 @@ async function measureCorrectness(owner: string, repo: string, token: string): P
     // Run ESLint with a basic configuration
     const eslint = new ESLint();
     console.log(`Linting files in ${repoDir}`);
-    const results = await eslint.lintFiles([path.join(repoDir, 'src', 'license.ts')]);
-    // const results = await eslint.lintFiles([`C:\\Users\\rtjor\\OneDrive - purdue.edu\\Documents\\Courses\\Fall 2024\\ECE 461\\Team-Project-461\\correctness_repo\\src\\license.ts`]);
+    const results = await eslint.lintFiles([path.join(repoDir, '**', '*.{ts, tsx}')]);
     console.log('ESLint results:', JSON.stringify(results, null, 2));
 
     if (!results || results.length === 0) {
