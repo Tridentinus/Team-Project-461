@@ -100,7 +100,7 @@ export function calculateIRM(issues: IssueNode[]) {
 
   const averageResponseTime = issueCount > 0 ? totalResponseTime / issueCount : 0;
 
-  logMessage('INFO', `Calculated IRM (Average Issue Response Time): ${averageResponseTime} minutes`);
+  logMessage('DEBUG', `Calculated IRM (Average Issue Response Time): ${averageResponseTime} minutes`);
   
   // Normalize IRM to a score between 0 and 1
   return normalizeIRM(averageResponseTime, maxResponseTime);
@@ -110,7 +110,7 @@ export function calculateIRM(issues: IssueNode[]) {
 export function normalizeIRM (averageResponseTime: number, maxResponseTime: number) {
   // Clamp response time to maxResponseTime and normalize between 0 and 1
   const clampedResponseTime = Math.min(averageResponseTime, maxResponseTime);
-  logMessage('INFO', `Clamped Response Time: ${clampedResponseTime} minutes`);
+  logMessage('DEBUG', `Clamped Response Time: ${clampedResponseTime} minutes`);
   logMessage('INFO', `Normalized IRM Score: ${1 - clampedResponseTime / maxResponseTime}`);
   return 1 - clampedResponseTime / maxResponseTime;
   

@@ -16,11 +16,13 @@ export default [
       '@typescript-eslint': typescriptPlugin,
     },
     rules: {
-      '@typescript-eslint/no-unused-vars': 'warn',
-      '@typescript-eslint/explicit-function-return-type': 'warn',
-      '@typescript-eslint/consistent-type-definitions': 'warn',
-      'prefer-const': 'warn',
-      'no-console': 'off'
+      // Core TypeScript rules
+      '@typescript-eslint/no-unused-vars': 'warn', // Quick scan for unused variables
+      'no-undef': 'warn', // Prevent use of undefined variables
+      '@typescript-eslint/no-redeclare': 'warn', // Prevent variable redeclaration
+      'no-extra-semi': 'warn', // Check for unnecessary semicolons
+      'no-constant-condition': 'warn', // Warn about constant conditions in control statements
+      'no-console': 'off', // Allow console.log
     },
   },
   {
@@ -32,10 +34,12 @@ export default [
       },
     },
     rules: {
-      'no-unused-vars': 'warn',
-      'consistent-return': 'warn',
-      'prefer-const': 'warn',
-      'no-console': 'off',
+      'no-unused-vars': 'warn', // Warn about unused variables
+      'no-undef': 'warn', // Prevent use of undefined variables
+      'no-redeclare': 'warn', // Prevent variable redeclaration
+      'no-extra-semi': 'warn', // Check for unnecessary semicolons
+      'no-constant-condition': 'warn', // Warn about constant conditions in control statements
+      'no-console': 'off', // Allow console.log
     },
   },
 ];

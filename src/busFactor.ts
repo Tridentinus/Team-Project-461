@@ -103,18 +103,18 @@ export function calculateBusFactor(contributors: CommitNode[]): number {
     });
   
     // Log the number of commits per contributor
-    logMessage('INFO', 'Commit count by author:');
+    logMessage('DEBUG', 'Commit count by author:');
     Object.entries(commitCountByAuthor).forEach(([author, count]) => {
-      logMessage('INFO', `${author}: ${count} commits`);
+      logMessage('DEBUG', `${author}: ${count} commits`);
     });
   
     // Sort contributors by commit count
     const sortedContributors = Object.entries(commitCountByAuthor).sort((a, b) => b[1] - a[1]);
   
     // Log the sorted contributors
-    logMessage('INFO', 'Sorted contributors by commit count:');
+    logMessage('DEBUG', 'Sorted contributors by commit count:');
     sortedContributors.forEach(([author, count]) => {
-      logMessage('INFO', `${author}: ${count} commits`);
+      logMessage('DEBUG', `${author}: ${count} commits`);
     });
   
     // Calculate the bus factor (e.g., contributors covering 50% of the total commits)
