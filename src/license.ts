@@ -87,13 +87,13 @@ export async function isLicenseCompatible(owner: string, name: string): Promise<
     const licenseText = data.repository.licenseFile?.text || data.repository.readme?.text || '';
     const extractedLicense = extractLicenseFromText(licenseText);
     if (extractedLicense) {
-      logMessage('INFO', `Extracted license from file: ${extractedLicense}`);
+      logMessage('INFO', `Extracted license for ${name}: ${extractedLicense}`);
       return compatibleLicenses.includes(extractedLicense) ? 1 : 0;
     }
 
     return 0; // If no license is found or compatible
   } catch (error: any) {
-    logMessage('ERROR', `Failed to fetch license: ${error.message}`);
+    logMessage('ERROR', `Failed to fetch license for ${name}: ${error.message}`);
     return 0; // Return not compatible on error
   }
 }

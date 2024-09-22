@@ -79,8 +79,7 @@ export async function fetchRepoContributors(owner: string, name: string): Promis
     return data.repository.defaultBranchRef.target.history.edges;
   } catch (error) {
     const errorMessage = (error instanceof Error) ? error.message : 'Unknown error occurred';
-    logMessage('ERROR', `Error fetching contributors: ${errorMessage}`);
-    console.error(`Error fetching contributors: ${errorMessage}`);
+    logMessage('ERROR', `Error fetching contributors for BusFactor: ${errorMessage}`);
     return [];
   }
 }
@@ -190,7 +189,7 @@ export function calculateBusFactor(contributors: CommitNode[]): number {
       return contributors;
   
     } catch (error) {
-      console.error(`Error fetching contributors: ${(error as Error).message}`);
+      logMessage('ERROR', `Error fetching contributors: ${(error as Error).message}`);
       return [];
     }
   }

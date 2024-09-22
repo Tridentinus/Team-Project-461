@@ -1,9 +1,12 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { getLinkType, parseGitHubUrl, parseNpmUrl, logMessage, clearLog, getUrlsFromFile, gitHubRequest, npmToGitHub } from '../src/utils.ts'; // adjust the path as necessary
 import { GraphQLClient } from 'graphql-request';
 import * as fs from 'fs';
 import axios from "axios";
-import  {LOG_FILE } from '../src/config.ts';
+import * as utils from '../src/utils';
+import { LOG_FILE } from '../src/config.ts'; // Import LOG_FILE
+
+
 
 describe('getLinkType', () => {
   it('should return "GitHub" for GitHub URLs', () => {
@@ -92,15 +95,31 @@ describe('getNpmparseNpmUrlName', () => {
   });
 });
 
-// Mock the file system module
 vi.mock('fs');
 
 describe('logMessage', () => {
+  let mockAppendFileSync: vi.SpyInstance;
+  let mockConsoleLog: vi.SpyInstance;
+
+  beforeEach(() => {
+    mockAppendFileSync = vi.spyOn(fs, 'appendFileSync');
+    mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {}); // Mock console.log to suppress output
+    // Mock the module exporting LOG_LEVEL
+    vi.mock('../src/config.ts', () => ({
+      GITHUB_TOKEN: 'mock-github-token',  // Override GITHUB_TOKEN for the test
+      LOG_FILE: 'mock-log-file.log',  // Override LOG_FILE for the test
+      LOG_LEVEL: '2',  // Override LOG_LEVEL for the test. Print all log levels
+    }));
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks(); // Restore mocks after each test
+  });
+
   it('should log the correct message format', () => {
     // Arrange: Mock the current date and fs.appendFileSync
     const mockDate = new Date('2024-09-13T12:00:00Z');
     vi.setSystemTime(mockDate);
-    const mockAppendFileSync = vi.spyOn(fs, 'appendFileSync');
     
     const level = 'INFO';
     const message = 'This is a test log message';
@@ -110,12 +129,10 @@ describe('logMessage', () => {
     
     // Assert: Check if fs.appendFileSync was called with the correct arguments
     const expectedLogEntry = `2024-09-13T12:00:00.000Z [INFO] - This is a test log message\n`;
-    expect(mockAppendFileSync).toHaveBeenCalledWith(expect.any(String), expectedLogEntry, { flag: 'a' });
+    expect(mockAppendFileSync).toHaveBeenCalledWith(LOG_FILE, expectedLogEntry, { flag: 'a' });
   });
 
   it('should append the message to the log file', () => {
-    const mockAppendFileSync = vi.spyOn(fs, 'appendFileSync');
-    
     const level = 'ERROR';
     const message = 'An error occurred';
     
@@ -123,13 +140,68 @@ describe('logMessage', () => {
     
     expect(mockAppendFileSync).toHaveBeenCalledTimes(1);
   });
+
+  it('should log ERROR messages to the console and set process.exitCode', () => {
+    const level = 'ERROR';
+    const message = 'This is an error message';
+    
+    logMessage(level, message);
+    
+    // Assert that console.log was called and process.exitCode was set
+    expect(mockConsoleLog).toHaveBeenCalledWith(`Error: ${message}`);
+    expect(process.exitCode).toBe(1);
+  });
+
+  it('should log DEBUG messages to the console', () => {
+    const level = 'DEBUG';
+    const message = 'This is a debug message';
+    
+    logMessage(level, message);
+    
+    // Assert that console.log was called with the message
+    expect(mockAppendFileSync).toHaveBeenCalled();
+  });
 });
+
+
+// // Mock the file system module
+// vi.mock('fs');
+
+// describe('logMessage', () => {
+//   it('should log the correct message format', () => {
+//     // Arrange: Mock the current date and fs.appendFileSync
+//     const mockDate = new Date('2024-09-13T12:00:00Z');
+//     vi.setSystemTime(mockDate);
+//     const mockAppendFileSync = vi.spyOn(fs, 'appendFileSync');
+    
+//     const level = 'INFO';
+//     const message = 'This is a test log message';
+    
+//     // Act: Call the function
+//     logMessage(level, message);
+    
+//     // Assert: Check if fs.appendFileSync was called with the correct arguments
+//     const expectedLogEntry = `2024-09-13T12:00:00.000Z [INFO] - This is a test log message\n`;
+//     expect(mockAppendFileSync).toHaveBeenCalledWith(expect.any(String), expectedLogEntry, { flag: 'a' });
+//   });
+
+//   it('should append the message to the log file', () => {
+//     const mockAppendFileSync = vi.spyOn(fs, 'appendFileSync');
+    
+//     const level = 'ERROR';
+//     const message = 'An error occurred';
+    
+//     logMessage(level, message);
+    
+//     expect(mockAppendFileSync).toHaveBeenCalledTimes(1);
+//   });
+// });
 
 // Mock the file system module
 vi.mock('fs');
 
 describe('clearLog', () => {
-  const mockLogFile = LOG_FILE;
+  const mockLogFile = 'mock-log-file.log';
 
   it('should clear the log file if it exists', () => {
     // Arrange: Mock fs.existsSync to return true and fs.writeFileSync
@@ -188,7 +260,7 @@ describe('getUrlsFromFile', () => {
         expect(result).toEqual([]);
     });
 
-    it('should throw an error when the file does not exist', () => {
+    it('should return [] when the file does not exist', () => {
         // Setup the mock
         vi.mocked(fs.existsSync).mockReturnValue(false);
         

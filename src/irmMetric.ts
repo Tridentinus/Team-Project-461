@@ -64,8 +64,7 @@ export async function fetchRepoIssues(owner: string, name: string) {
       return data.repository.issues.edges;
     } catch (error) {
       const errorMessage = (error instanceof Error) ? error.message : 'Unknown error occurred';
-      logMessage('ERROR', `Error fetching issues: ${errorMessage}`);
-      console.error(`Error fetching issues: ${errorMessage}`);
+      logMessage('ERROR', `Error fetching issues for ResponsiveMaintainer: ${errorMessage}`);
       return [];
     }
 }
