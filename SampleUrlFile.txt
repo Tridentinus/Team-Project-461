@@ -3,3 +3,8 @@ https://www.npmjs.com/package/express
 https://github.com/nullivex/nodist
 https://github.com/lodash/lodash
 https://www.npmjs.com/package/browserify
+https://www.npmjs.com/package/wat4hjs
+https://github.com/mrdoob/three.js/
+https://www.npmjs.com/package/socket.io
+https://github.com/prathameshnetake/libvlc
+https://www.npmjs.com/package/react
