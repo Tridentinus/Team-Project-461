@@ -88,7 +88,6 @@ export function logMessage(level: string, message: string) {
 
   // If the log level is set to 1, do not log DEBUG messages
   if (LOG_LEVEL === "1" && level === "DEBUG") {
-    console.log('\n\n1\n\n')
     return;
   }
 
