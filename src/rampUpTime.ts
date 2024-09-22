@@ -38,7 +38,7 @@ export async function getDocumentationScore(repoOwner: string, repoName: string)
 
     try {
         const data = await gitHubRequest(query, { repoOwner, repoName }) as ReadmeResponse;
-        const readmeContent = data.repository.object.text || '';
+        const readmeContent = data.repository?.object?.text || '';
         const dom = new JSDOM(readmeContent);
         const text = dom.window.document.body.textContent || '';
         return calculateScore(text);

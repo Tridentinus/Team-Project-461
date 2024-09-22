@@ -163,40 +163,6 @@ describe('logMessage', () => {
   });
 });
 
-
-// // Mock the file system module
-// vi.mock('fs');
-
-// describe('logMessage', () => {
-//   it('should log the correct message format', () => {
-//     // Arrange: Mock the current date and fs.appendFileSync
-//     const mockDate = new Date('2024-09-13T12:00:00Z');
-//     vi.setSystemTime(mockDate);
-//     const mockAppendFileSync = vi.spyOn(fs, 'appendFileSync');
-    
-//     const level = 'INFO';
-//     const message = 'This is a test log message';
-    
-//     // Act: Call the function
-//     logMessage(level, message);
-    
-//     // Assert: Check if fs.appendFileSync was called with the correct arguments
-//     const expectedLogEntry = `2024-09-13T12:00:00.000Z [INFO] - This is a test log message\n`;
-//     expect(mockAppendFileSync).toHaveBeenCalledWith(expect.any(String), expectedLogEntry, { flag: 'a' });
-//   });
-
-//   it('should append the message to the log file', () => {
-//     const mockAppendFileSync = vi.spyOn(fs, 'appendFileSync');
-    
-//     const level = 'ERROR';
-//     const message = 'An error occurred';
-    
-//     logMessage(level, message);
-    
-//     expect(mockAppendFileSync).toHaveBeenCalledTimes(1);
-//   });
-// });
-
 // Mock the file system module
 vi.mock('fs');
 
