@@ -31,6 +31,21 @@ type RepoIssuesResponse = {
 };
 
 // Function to fetch repository issues with dynamic GitHub token
+/**
+ * Fetches the open issues for a given GitHub repository.
+ *
+ * @param owner - The owner of the repository.
+ * @param name - The name of the repository.
+ * @returns A promise that resolves to an array of issue edges, each containing issue details.
+ *
+ * @throws Will log an error message if the request fails and return an empty array.
+ *
+ * @example
+ * ```typescript
+ * const issues = await fetchRepoIssues('octocat', 'Hello-World');
+ * console.log(issues);
+ * ```
+ */
 export async function fetchRepoIssues(owner: string, name: string) {
     const client = new GraphQLClient(endpoint, {
       headers: {
@@ -70,6 +85,41 @@ export async function fetchRepoIssues(owner: string, name: string) {
 }
 
 // Function to calculate IRM
+/**
+ * Calculates the Issue Response Metric (IRM) for a given set of issues.
+ * The IRM is the average response time for issues, normalized to a score between 0 and 1.
+ *
+ * @param issues - An array of IssueNode objects representing the issues to calculate the IRM for.
+ * @returns The normalized IRM score.
+ *
+ * @remarks
+ * - The response time is calculated based on the time difference between the issue creation and the first comment.
+ * - If there are no comments, the response time is calculated based on the time difference between the issue creation and closure.
+ * - If neither comments nor closure time is available, a maximum response time is used.
+ * - The IRM is logged as an informational message.
+ *
+ * @example
+ * ```typescript
+ * const issues = [
+ *   {
+ *     node: {
+ *       createdAt: '2023-01-01T00:00:00Z',
+ *       comments: { nodes: [{ createdAt: '2023-01-01T01:00:00Z' }] },
+ *       closedAt: null
+ *     }
+ *   },
+ *   {
+ *     node: {
+ *       createdAt: '2023-01-02T00:00:00Z',
+ *       comments: { nodes: [] },
+ *       closedAt: '2023-01-02T02:00:00Z'
+ *     }
+ *   }
+ * ];
+ * const irmScore = calculateIRM(issues);
+ * console.log(irmScore); // Output: normalized IRM score
+ * ```
+ */
 export function calculateIRM(issues: IssueNode[]) {
   let totalResponseTime = 0;
   let issueCount = 0;
@@ -107,6 +157,24 @@ export function calculateIRM(issues: IssueNode[]) {
 }
 
 // Function to normalize IRM score
+/**
+ * Normalizes the Incident Response Metric (IRM) based on the average response time.
+ * 
+ * @param averageResponseTime - The average response time in minutes.
+ * @param maxResponseTime - The maximum allowable response time in minutes.
+ * @returns The normalized IRM score, clamped between 0 and 1.
+ * 
+ * @remarks
+ * The function clamps the average response time to the maximum response time if it exceeds it,
+ * and then normalizes the clamped response time to a value between 0 and 1. The normalized score
+ * is calculated as `1 - (clampedResponseTime / maxResponseTime)`.
+ * 
+ * @example
+ * ```typescript
+ * const irmScore = normalizeIRM(30, 60);
+ * console.log(irmScore); // Output: 0.5
+ * ```
+ */
 export function normalizeIRM (averageResponseTime: number, maxResponseTime: number) {
   // Clamp response time to maxResponseTime and normalize between 0 and 1
   const clampedResponseTime = Math.min(averageResponseTime, maxResponseTime);
@@ -116,6 +184,13 @@ export function normalizeIRM (averageResponseTime: number, maxResponseTime: numb
   
 }
 
+/**
+ * Retrieves the Issue Resolution Metric (IRM) for a given repository.
+ *
+ * @param owner - The owner of the repository.
+ * @param repo - The name of the repository.
+ * @returns A promise that resolves to the IRM value.
+ */
 export async function getIRM(owner: string, repo: string): Promise<number> {
   const issues = await fetchRepoIssues(owner, repo);;
   return calculateIRM(issues);

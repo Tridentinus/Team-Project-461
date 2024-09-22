@@ -36,11 +36,13 @@ type CommitNode = {
 
 
 
-// Function to fetch repository data with dynamic GitHub token
-// Arguments: owner (string), name (string), token (string)
-// Returns: Promise<void>
-
-//how it works: fetches the repository data from the owner and name provided
+/**
+ * Fetches the contributors of a given GitHub repository.
+ *
+ * @param owner - The owner of the repository.
+ * @param name - The name of the repository.h * @returns A promise that resolves to an array of commit nodes representing the contributors. *
+ * @throws Will log an error message if the request fails and return an empty array. * * @example * ```typescript * const contributors = await fetchRepoContributors('octocat', 'Hello-World'); * console.log(contributors); * ```
+ */
 export async function fetchRepoContributors(owner: string, name: string): Promise<CommitNode[]> {
   const client = new GraphQLClient(endpoint, {
     headers: {
@@ -85,14 +87,18 @@ export async function fetchRepoContributors(owner: string, name: string): Promis
 }
 
 
-// Function to calculate the Bus Factor for a list of contributors
-// Arguments: contributors (array of CommitNode)
-// Returns: number
 
-//how it works: calculates the bus factor for the contributors by 
-//counting the commits by each contributor and sorting them by commit count
-//then calculates the bus factor by finding the contributors that cover 50% of the total commits
-
+/**
+ * Calculates the bus factor for a given set of contributors.
+ * 
+ * The bus factor is a measure of the risk resulting from information and capabilities not being shared among team members.
+ * It is defined as the number of key developers who would need to be incapacitated to cause a project to stall due to lack of knowledgeable or competent personnel.
+ * 
+ * This function calculates the bus factor by determining the minimum number of contributors who together account for at least 50% of the total commits.
+ * 
+ * @param contributors - An array of `CommitNode` objects representing the contributors and their commits.
+ * @returns The bus factor, which is the number of contributors covering at least 50% of the total commits.
+ */
 export function calculateBusFactor(contributors: CommitNode[]): number {
     const commitCountByAuthor: { [author: string]: number } = {};
   
@@ -141,14 +147,19 @@ export function calculateBusFactor(contributors: CommitNode[]): number {
     return busFactor;
   }
   
-  // Function to fetch contributors for a GitHub repository
-// Arguments: owner (string), repo (string), token (string)
-// Returns: Promise<any[]>
 
 
 
   
 
+/**
+ * Calculates the Bus Factor score for a given repository.
+ * The Bus Factor is a measure of the risk associated with the concentration of information in a project.
+ * 
+ * @param owner - The owner of the repository.
+ * @param repo - The name of the repository.
+ * @returns A promise that resolves to the Bus Factor score, a number between 0 and 1.
+ */
 export async function getBusFactorScore(owner: string, repo: string): Promise<number> {
   const contributors = await fetchRepoContributors(owner, repo);
   const busFactor = calculateBusFactor(contributors);
