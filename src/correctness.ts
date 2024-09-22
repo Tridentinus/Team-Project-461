@@ -10,6 +10,7 @@ export async function cleanUp(repoDir: string): Promise<void> {
   logMessage('INFO', `Cleaning up ${repoDir}`);
   try {
     await fs.rm(repoDir, { recursive: true, force: true });
+    await new Promise(resolve => setTimeout(resolve, 5000));
     logMessage('INFO', 'Repository contents cleaned up successfully');
   } catch (error) {
     logMessage('ERROR', `Error cleaning up repository contents: ${error instanceof Error ? error.message : String(error)}`);
