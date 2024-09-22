@@ -19,10 +19,6 @@ if (!LOG_FILE) {
   process.exitCode = 1;
 }
 
-// create empty log file
-fs.writeFileSync(LOG_FILE, '', { flag: "w" });
-
-
 // Validate the GitHub token
 try {
   const isValid = validateGitHubToken(GITHUB_TOKEN);
