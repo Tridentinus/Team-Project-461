@@ -1,5 +1,5 @@
 import { GraphQLClient } from 'graphql-request';
-import { logMessage } from './utils.js';
+import { logMessage, gitHubRequest } from './utils.js';
 import axios from 'axios';
 import { GITHUB_TOKEN } from './config.js';
 
@@ -73,7 +73,8 @@ export async function fetchRepoContributors(owner: string, name: string): Promis
   `;
 
   try {
-    const data = await client.request<RepoContributorsResponse>(query, { owner, name });
+    const data: RepoContributorsResponse = await gitHubRequest(query, {owner, name}) as RepoContributorsResponse;
+    // const data = await client.request<RepoContributorsResponse>(query, { owner, name });
     logMessage('INFO', `Successfully fetched contributors for ${owner}/${name}`);
     return data.repository.defaultBranchRef.target.history.edges;
   } catch (error) {
