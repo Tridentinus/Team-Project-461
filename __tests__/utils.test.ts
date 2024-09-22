@@ -3,7 +3,6 @@ import { getLinkType, parseGitHubUrl, parseNpmUrl, logMessage, clearLog, getUrls
 import { GraphQLClient } from 'graphql-request';
 import * as fs from 'fs';
 import axios from "axios";
-import * as utils from '../src/utils';
 import { LOG_FILE } from '../src/config.ts'; // Import LOG_FILE
 
 

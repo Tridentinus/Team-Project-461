@@ -37,7 +37,7 @@ export async function getCorrectness(owner: string, repo: string): Promise<numbe
     
     const repoUrl = `https://github.com/${owner}/${repo}.git`;
     logMessage('DEBUG', `Cloning from: ${repoUrl}`);
-    await git.clone(repoUrl, repoDir);
+    await git.clone(repoUrl, repoDir, ['--depth', '1']);
     logMessage('INFO', 'Repository cloned successfully');
 
     // Verify repository existence

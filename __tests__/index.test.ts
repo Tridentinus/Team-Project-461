@@ -1,9 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { getScores } from '../src/score.ts';
 import * as utils from '../src/utils.ts';
 import * as score from '../src/score.ts';
 import * as fs from "fs";
-import { log } from 'console';
 
 vi.mock('./score');
 vi.mock('./utils');
@@ -29,13 +27,13 @@ describe('CLI logic', () => {
   it('should return the expected output given a file of valid URLs', async () => {
     process.argv = ['node', 'dist/index.js', 'SampleUrlFile.txt'];
     vi.mocked(fs.existsSync).mockReturnValue(true);
-    vi.mocked(fs.readFileSync).mockReturnValue('https://github.com/cloudinary/cloudinary_npm\nhttps://www.npmjs.com/package/express\nhttps://github.com/nullivex/nodist');
+    vi.mocked(fs.readFileSync).mockReturnValue('https://github.com/cloudinary/cloudinary_npm\nhttps://www.npmjs.com/package/express');
     const mockGetScores = vi.spyOn(score, 'getScores').mockResolvedValueOnce('some-score-output');;
     const mockGetLinkType = vi.spyOn(utils, 'getLinkType')
     clearIndexCache();
     await import('../src/index.ts');
 
-    expect(mockGetScores).toHaveBeenCalledTimes(3);
-    expect(mockGetLinkType).toHaveBeenCalledTimes(3);
+    expect(mockGetScores).toHaveBeenCalledTimes(2);
+    expect(mockGetLinkType).toHaveBeenCalledTimes(2);
   }, { timeout: 10000 });
 });

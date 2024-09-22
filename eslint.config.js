@@ -17,7 +17,10 @@ export default [
     },
     rules: {
       '@typescript-eslint/no-unused-vars': 'warn',
-      'no-console': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'warn',
+      '@typescript-eslint/consistent-type-definitions': 'warn',
+      'prefer-const': 'warn',
+      'no-console': 'off'
     },
   },
   {
@@ -29,8 +32,10 @@ export default [
       },
     },
     rules: {
-      'no-unused-vars': 'warn', // You can set specific rules for JavaScript
-      'no-console': 'off', // You can customize as needed
+      'no-unused-vars': 'warn',
+      'consistent-return': 'warn',
+      'prefer-const': 'warn',
+      'no-console': 'off',
     },
   },
 ];
