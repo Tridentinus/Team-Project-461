@@ -15,9 +15,6 @@ const clearIndexCache = () => {
     delete require.cache[require.resolve('../src/index.ts')];
   };
 describe('CLI logic', () => {
-  const mockExit = vi.spyOn(process, 'exit').mockImplementation((code?: string | number | null) => {
-    throw new Error(`process.exit: ${code}`);
-  });
   const originalArgv = process.argv; // Save the original process.argv
   beforeEach(() => {
         process.argv = [...originalArgv]; // Reset process.argv before each test
