@@ -1,21 +1,33 @@
 import dotenv from 'dotenv';
 import { GraphQLClient } from 'graphql-request';
-import { expect } from 'vitest';
+import fs from 'fs';
+import { logMessage } from './utils.js';
 dotenv.config(); // Load environment variables
 
 // TODO: Add GitHub token as a secret on the repository. Then remove the default value.
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 const LOG_FILE = process.env.LOG_FILE || 'myLog.log';
-const LOG_LEVEL = process.env.LOG_LEVEL || 'INFO';
+const LOG_LEVEL = process.env.LOG_LEVEL || '0';
 
 if (!GITHUB_TOKEN) {
-    throw new Error('GITHUB_TOKEN is required');
+  logMessage('ERROR', 'GitHub token is missing');
+  process.exit(1);
 }
 
+// create empty log file
+fs.writeFileSync(LOG_FILE, '', { flag: "w" });
+
+
 // Validate the GitHub token
-const isValid = await validateGitHubToken(GITHUB_TOKEN);
-if (!isValid) {
-    throw new Error('Invalid GitHub token');
+try {
+  const isValid = validateGitHubToken(GITHUB_TOKEN);
+  if (!isValid) {
+    logMessage('ERROR', 'Invalid GitHub token');
+    process.exit(1);
+  }
+} catch (error) {
+  logMessage('ERROR', `GitHub token validation error: ${(error as Error).message}`);
+  process.exit(1);
 }
 
 export { GITHUB_TOKEN, LOG_FILE, LOG_LEVEL };
@@ -51,7 +63,9 @@ export async function validateGitHubToken(token: string): Promise<boolean> {
     catch (error) {
       if ((error as Error).message.includes('Bad credentials')) {
         return false;
-      }
-        throw error;//throw error if it is not a bad credentials error
+      
+      } 
+      logMessage('ERROR', `GitHub token validation error: ${(error as Error).message}`);
+      throw error;//throw error if it is not a bad credentials error
     }
     }

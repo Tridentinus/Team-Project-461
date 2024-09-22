@@ -185,7 +185,7 @@ describe('getUrlsFromFile', () => {
         expect(result).toEqual([]);
     });
 
-    it('should throw an error when the file does not exist', () => {
+    it('should return [] when the file does not exist', () => {
         // Setup the mock
         vi.mocked(fs.existsSync).mockReturnValue(false);
         

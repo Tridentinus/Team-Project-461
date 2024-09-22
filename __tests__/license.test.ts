@@ -156,7 +156,7 @@ describe('extractLicenseFromText', () => {
       expect(extractLicenseFromText(text)).toBe(spdxId);
     });
 
-    it(`should return the correct SPDX license ID for partial match of "${name}"`, () => {
+    it(`should return null for partial match of "${name}"`, () => {
       const text = `Details about the ${name.split(' ')[0]}`;
       expect(extractLicenseFromText(text)).toBe(null); // Assuming partial match should not return any SPDX ID
     });
@@ -176,7 +176,7 @@ describe('extractLicenseFromText', () => {
   });
 
   it('should return null if the license name is present but not in the mappings', () => {
-    const text = 'Licensed under a new and obscure license not in the mappings';
+    const text = 'Licensed under a new and obscure license, My New License, not in the mappings';
     expect(extractLicenseFromText(text)).toBe(null);
   });
 });

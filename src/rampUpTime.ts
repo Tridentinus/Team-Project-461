@@ -1,7 +1,6 @@
 import { gql } from 'graphql-request';
 import { JSDOM } from 'jsdom';
 import { gitHubRequest, logMessage } from './utils.js';
-import { log } from 'console';
 
 const KEYWORDS = ["installation", "usage", "api", "examples"];
 const SCORE_THRESHOLD = 0; // Default score when no documentation is found

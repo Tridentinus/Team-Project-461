@@ -1,5 +1,5 @@
 import { GraphQLClient } from "graphql-request";
-import { GITHUB_TOKEN, LOG_FILE } from "./config.js";
+import { GITHUB_TOKEN, LOG_FILE, LOG_LEVEL } from "./config.js";
 import dotenv from "dotenv";
 import * as fs from "fs";
 import axios from "axios";
@@ -75,8 +75,26 @@ export function parseNpmUrl(link: string): string | null {
  * @returns void
  */
 export function logMessage(level: string, message: string) {
+  // Output the error messages to the console
+  if (level === "ERROR") {
+    console.log(`Error: ${message}`);
+    process.exitCode = 1;
+  }
+  
+  // If the log level is set to 0, do not log any messages
+  if (LOG_LEVEL === "0") {
+    return;
+  }
+
+  // If the log level is set to 1, do not log DEBUG messages
+  if (LOG_LEVEL === "1" && level === "DEBUG") {
+    return;
+  }
+
+  // Create a log entry with a timestamp, log level, and message
   const logEntry = `${new Date().toISOString()} [${level}] - ${message}\n`;
   fs.appendFileSync(LOG_FILE, logEntry, { flag: "a" });
+
 }
 
 /**
@@ -98,6 +116,7 @@ export function clearLog() {
 export function getUrlsFromFile(filePath: string): string[] {
   // Check if the file exists
   if (!fs.existsSync(filePath)) {
+    logMessage("ERROR", `File not found: ${filePath}`);
     throw new Error(`File not found: ${filePath}`);
   }
 
