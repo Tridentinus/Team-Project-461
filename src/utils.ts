@@ -1,7 +1,6 @@
 import { GraphQLClient } from "graphql-request";
 
 import { GITHUB_TOKEN, LOG_FILE, LOG_LEVEL } from "./config.js";
-import dotenv from "dotenv";
 import * as fs from "fs";
 import axios from "axios";
 
