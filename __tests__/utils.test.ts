@@ -3,13 +3,16 @@ import { getLinkType, parseGitHubUrl, parseNpmUrl, logMessage, clearLog, getUrls
 import { GraphQLClient } from 'graphql-request';
 import * as fs from 'fs';
 import axios from "axios";
-import * as utils from '../src/utils';
 import  {LOG_FILE } from '../src/config.ts';
 
 describe('getLinkType', () => {
   it('should return "GitHub" for GitHub URLs', () => {
     expect(getLinkType('https://github.com/someuser/somerepo')).toBe('GitHub');
     expect(getLinkType('http://www.github.com/someuser/somerepo')).toBe('GitHub');
+    expect(getLinkType('git@github.com:owner/repo')).toBe('GitHub');
+    expect(getLinkType('git+ssh://git@github.com/owner/repo')).toBe('GitHub');
+    expect(getLinkType('https://github.com/owner/repo/')).toBe('GitHub');
+    expect(getLinkType('https://github.com/owner/repo.git')).toBe('GitHub');
   });
 
   it('should return "npm" for npm URLs', () => {

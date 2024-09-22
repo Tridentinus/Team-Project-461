@@ -10,7 +10,7 @@ import axios from "axios";
  * @returns The type of the link. Possible values are "GitHub", "npm", or "Unknown".
  */
 export function getLinkType(link: string): string {
-  const githubRegex = /(?:git\+)?(?:https?:\/\/)?(?:www\.)?(?:git@)?github\.com\/([^\/]+)\/([^\/]+)(?:\.git)?\/?$/;
+  const githubRegex = /(?:git\+)?(?:https?:\/\/)?(?:www\.)?(?:git@)?github\.com[:\/]([^\/]+)\/([^\/]+)(?:\.git)?\/?$/;
   const npmRegex = /(https?:\/\/)?(www\.)?npmjs\.com\/package\/([^\/]+)(?:\/.*)?/;
 
   if (githubRegex.test(link)) {
