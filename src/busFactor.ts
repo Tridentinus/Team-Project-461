@@ -1,11 +1,7 @@
 import { GraphQLClient } from 'graphql-request';
 import { logMessage } from './utils.js';
-import dotenv from 'dotenv';
 import axios from 'axios';
 import { GITHUB_TOKEN } from './config.js';
-
-
-dotenv.config();  // Load environment variables
 
 // GraphQL endpoint
 const endpoint = 'https://api.github.com/graphql';

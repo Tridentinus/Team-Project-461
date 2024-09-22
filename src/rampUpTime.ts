@@ -5,10 +5,6 @@ import { gitHubRequest, logMessage } from './utils.js';
 const KEYWORDS = ["installation", "usage", "api", "examples"];
 const DEFAULT_SCORE = 0; // Default score when no documentation is found
 
-interface RampUpScore {
-    documentationScore: number;
-}
-
 interface ReadmeResponse {
     repository: {
         object: {

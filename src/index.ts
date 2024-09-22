@@ -1,7 +1,6 @@
 import { getScores } from "./score.js";
 import { parseGitHubUrl, parseNpmUrl, getUrlsFromFile, getLinkType, logMessage, npmToGitHub } from "./utils.js";
 
-// Main CLI logic
 const args = process.argv.slice(2);
 
 if (args.length !== 1) {

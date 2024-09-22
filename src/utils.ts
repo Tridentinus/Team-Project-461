@@ -1,10 +1,7 @@
 import { GraphQLClient } from "graphql-request";
 import { GITHUB_TOKEN, LOG_FILE } from "./config.js";
-import dotenv from "dotenv";
 import * as fs from "fs";
 import axios from "axios";
-
-dotenv.config(); // Load environment variables
 
 /**
  * Determines the type of a given link.
