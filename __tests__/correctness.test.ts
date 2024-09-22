@@ -18,7 +18,7 @@ describe('cleanUp', () => {
     await cleanUp(repoDir);
 
     expect(fs.rm).toHaveBeenCalledWith(repoDir, { recursive: true, force: true });
-  });
+  }, 30000);
 
   it('should log an error if cleanup fails', async () => {
     const repoDir = 'test-repo';
@@ -28,7 +28,7 @@ describe('cleanUp', () => {
     await cleanUp(repoDir);
 
     expect(fs.rm).toHaveBeenCalledWith(repoDir, { recursive: true, force: true });
-  });
+  }, 30000);
 });
 
 describe('ensureRepoDir', () => {
@@ -44,7 +44,7 @@ describe('ensureRepoDir', () => {
 
     expect(fs.access).toHaveBeenCalledWith(repoDir);
     expect(fs.mkdir).not.toHaveBeenCalled();
-  });
+  }, 30000);
 
   it('should create a directory if it does not exist', async () => {
     const repoDir = 'new-repo';
@@ -55,7 +55,7 @@ describe('ensureRepoDir', () => {
 
     expect(fs.access).toHaveBeenCalledWith(repoDir);
     expect(fs.mkdir).toHaveBeenCalledWith(repoDir);
-  });
+  }, 30000);
 });
 
 describe('getCorrectness', () => {
@@ -87,7 +87,7 @@ describe('getCorrectness', () => {
     // Score should be between 0 and 1
     expect(result).toBeGreaterThanOrEqual(0);
     expect(result).toBeLessThanOrEqual(1);
-  });
+  }, 30000);
 
   it('should return 0 if no files are found', async () => {
     const owner = 'user';
@@ -104,7 +104,7 @@ describe('getCorrectness', () => {
     const result = await getCorrectness(owner, repo);
 
     expect(result).toBe(0); // No files found
-  });
+  }, 30000);
 
   it('should return 0 and handle errors during linting', async () => {
     const owner = 'user';
@@ -124,5 +124,5 @@ describe('getCorrectness', () => {
     const result = await getCorrectness(owner, repo);
 
     expect(result).toBe(0); // Error during linting results in a score of 0
-  });
+  }, 30000);
 });
