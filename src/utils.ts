@@ -10,7 +10,7 @@ import axios from "axios";
  * @returns The type of the link. Possible values are "GitHub", "npm", or "Unknown".
  */
 export function getLinkType(link: string): string {
-  const githubRegex = /(?:git\+)?(?:https?:\/\/)?(?:www\.)?(?:git@)?github\.com[:\/]([^\/]+)\/([^\/]+)(?:\.git)?\/?$/;
+  const githubRegex = /(?:git\+)?(?:https?:\/\/)?(?:www\.)?(?:git@)?github\.com[:\/]([^\/]+)\/([^\/]+?)(?:\.git)?\/?$/;
   const npmRegex = /(https?:\/\/)?(www\.)?npmjs\.com\/package\/([^\/]+)(?:\/.*)?/;
 
   if (githubRegex.test(link)) {
@@ -28,8 +28,8 @@ export function getLinkType(link: string): string {
  * @returns An object containing the owner and name of the repository, or null if the link is invalid.
  */
 export function parseGitHubUrl(repoLink: string): { owner: string; repo: string } | null {
-  // Regex to handle various GitHub URL formats and ensure repo name does not end with .git
-  const regex = /(?:git\+)?(?:https?:\/\/)?(?:www\.)?(?:git@)?github\.com\/([^\/]+)\/([^\/]+?)(?:\.git)?\/?$/;
+  // Regex to handle various GitHub URL formats
+  const regex = /(?:git\+)?(?:https?:\/\/)?(?:www\.)?(?:git@)?github\.com[:\/]([^\/]+)\/([^\/]+?)(?:\.git)?\/?$/;
   const match = repoLink.match(regex);
 
   // Check if the regex matched and extract owner and repo
