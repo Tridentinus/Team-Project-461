@@ -4,8 +4,17 @@ import { getIRM } from "./irmMetric.js";
 import { calculateRampUpScore } from "./rampUpTime.js";
 import { measureConcurrentLatencies } from "./latency.js";
 
+/**
+ * Gets the scores for a given repository.
+ *
+ * @param owner - The owner of the repository.
+ * @param repo - The name of the repository.
+ * @param url - The URL of the repository.
+ * @returns The scores for the repository.
+ */
 export async function getScores(owner: string, repo: string, url: string): Promise<string> {
 
+  // Run the functions concurrently and measure the latencies
   const { latencies, results, errors } = await measureConcurrentLatencies([calculateRampUpScore, getBusFactorScore, getIRM, isLicenseCompatible], owner, repo);
 
   const rampUp = results[0] ?? 0;
@@ -24,6 +33,7 @@ export async function getScores(owner: string, repo: string, url: string): Promi
   const netScore = Number((0.1 * rampUp + 0.2 * responsiveMaintainer + 0.3 * busFactor + 0.4 * license).toFixed(3));
   const netScoreLatency = Number((busFactorLatency + responsiveMaintainerLatency + licenseLatency).toFixed(3));
 
+  // Output the results
   const output = {
     "URL": url,
     "NetScore": netScore,

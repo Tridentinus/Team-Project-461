@@ -1,4 +1,3 @@
-import { log } from "console";
 import { gitHubRequest, logMessage } from "./utils.js";
 import { gql } from 'graphql-request';
 

@@ -1,15 +1,18 @@
 import dotenv from 'dotenv';
 import { GraphQLClient } from 'graphql-request';
-import { expect } from 'vitest';
 dotenv.config(); // Load environment variables
 
 // TODO: Add GitHub token as a secret on the repository. Then remove the default value.
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
-const LOG_FILE = process.env.LOG_FILE || 'myLog.log';
-const LOG_LEVEL = process.env.LOG_LEVEL || 'INFO';
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const LOG_FILE = process.env.LOG_FILE || '';
+const LOG_LEVEL = process.env.LOG_LEVEL ?? 0;
 
 if (!GITHUB_TOKEN) {
-    throw new Error('GITHUB_TOKEN is required');
+  throw new Error('GITHUB_TOKEN is required');
+}
+
+if (!LOG_FILE) {
+  throw new Error('LOG_FILE is required');
 }
 
 // Validate the GitHub token
