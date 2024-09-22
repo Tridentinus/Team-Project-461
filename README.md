@@ -1,5 +1,5 @@
-# PackagePulse
-PackagePulse is a command-line interface (CLI) that analyzes GitHub repositories and npm packages.
+# PackageProbe
+PackageProbe is a command-line interface (CLI) that analyzes GitHub repositories and npm packages.
 
 ## Dependencies
 Download and install Node.js: https://nodejs.org/en/download/package-manager

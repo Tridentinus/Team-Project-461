@@ -1,10 +1,9 @@
 import { GraphQLClient } from "graphql-request";
+
 import { GITHUB_TOKEN, LOG_FILE, LOG_LEVEL } from "./config.js";
 import dotenv from "dotenv";
 import * as fs from "fs";
 import axios from "axios";
-
-dotenv.config(); // Load environment variables
 
 /**
  * Determines the type of a given link.
@@ -13,8 +12,8 @@ dotenv.config(); // Load environment variables
  * @returns The type of the link. Possible values are "GitHub", "npm", or "Unknown".
  */
 export function getLinkType(link: string): string {
-  const githubRegex = /^(https?:\/\/)?(www\.)?github\.com\/([^\/]+)\/([^\/]+)/;
-  const npmRegex = /^(https?:\/\/)?(www\.)?npmjs\.com\/package\/[^/]+/;
+  const githubRegex = /(?:git\+)?(?:https?:\/\/)?(?:www\.)?(?:git@)?github\.com[:\/]([^\/]+)\/([^\/]+?)(?:\.git)?\/?$/;
+  const npmRegex = /(https?:\/\/)?(www\.)?npmjs\.com\/package\/([^\/]+)(?:\/.*)?/;
 
   if (githubRegex.test(link)) {
     return "GitHub";
@@ -30,14 +29,15 @@ export function getLinkType(link: string): string {
  * @param repoLink - The link to the GitHub repository.
  * @returns An object containing the owner and name of the repository, or null if the link is invalid.
  */
-export function parseGitHubUrl( repoLink: string): { owner: string; repo: string } | null {
-  // More flexible regex to handle http(s), www, and valid GitHub URLs
-  const regex = /^(https?:\/\/)?(www\.)?github\.com\/([^\/]+)\/([^\/]+)/;
+export function parseGitHubUrl(repoLink: string): { owner: string; repo: string } | null {
+  // Regex to handle various GitHub URL formats
+  const regex = /(?:git\+)?(?:https?:\/\/)?(?:www\.)?(?:git@)?github\.com[:\/]([^\/]+)\/([^\/]+?)(?:\.git)?\/?$/;
   const match = repoLink.match(regex);
 
-  if (match && match.length >= 5) {
-    const owner = match[3]; // The owner is captured in group 3
-    const repo = match[4];  // The repository is captured in group 4
+  // Check if the regex matched and extract owner and repo
+  if (match && match[1] && match[2]) {
+    const owner = match[1]; // The owner is captured in group 1
+    const repo = match[2];  // The repository is captured in group 2
     return { owner, repo };
   } else {
     logMessage("ERROR", "Invalid GitHub repository link.");
@@ -171,21 +171,17 @@ export async function npmToGitHub(packageName: string): Promise<{owner: string, 
 
   try {
     logMessage("INFO", `Fetching metadata for npm package: ${packageName}`);
-    const response = await axios.get(`https://api.npms.io/v2/package/${packageName}`);
+    const response = await axios.get(`https://registry.npmjs.org/${packageName}`);
 
-    // Accessing the repository field under the collected metadata
-    const repoUrl = response.data.collected?.metadata?.links?.repository;
-
+    const repoUrl = response.data.repository?.url;
     if (!repoUrl) {
       logMessage("ERROR", `No repository information found for the npm package: ${packageName}`);
       return null;
     }
-
     if (getLinkType(repoUrl) === "GitHub") {
       const repoInfo = parseGitHubUrl(repoUrl) || { owner: "", repo: "" };
       logMessage(
-        "INFO",
-        `Found GitHub repository: ${repoInfo.owner}/${repoInfo.repo}`
+        "INFO", `Found GitHub repository: ${repoInfo.owner}, ${repoInfo.repo}`
       );
       return repoInfo;
     }

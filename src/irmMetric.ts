@@ -2,7 +2,6 @@ import { GraphQLClient } from 'graphql-request';
 import { logMessage } from './utils.js';
 import * as dotenv from 'dotenv';
 import { differenceInMinutes, parseISO } from 'date-fns';
-import { log } from 'console';
 import { GITHUB_TOKEN } from './config.js';
 
 dotenv.config();  // Load environment variables

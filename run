@@ -6,7 +6,7 @@ if [ "$1" == "install" ]; then
   npm install
   npm run build
   if [ $? -eq 0 ]; then
-    echo "Install succeeded"
+    echo "Install succeeded. Build successful."
     exit 0
   else
     echo "Install failed"
@@ -15,20 +15,27 @@ if [ "$1" == "install" ]; then
 fi
 
 if [ "$1" == "test" ]; then
-  # Run the tests and generate a coverage report, capturing output
-  OUTPUT=$(npx vitest run --coverage)
+  # Run the tests and generate a coverage report, directing stderr to /dev/null
+  OUTPUT=$(npx vitest run --coverage 2>/dev/null)
   VITEST_EXIT_CODE=$?
 
-  # Check the exit code of the test command
+  # If Vitest fails, still display the number of passed tests
   if [ $VITEST_EXIT_CODE -ne 0 ]; then
-    echo "Tests failed"
+    # Extract the number of failed tests and total tests
+    TESTS_FAILED=$(echo "$OUTPUT" | grep 'Tests' | awk '{print $2}')
+    TOTAL_TESTS=$(echo "$OUTPUT" | grep 'Tests' | awk '{print $5}' | sed 's/[()]//g')
+
+    # Calculate the number of passed tests
+    TESTS_PASSED=$((TOTAL_TESTS - TESTS_FAILED))
+
+    # Output the results in the specified format
+    echo "$TESTS_PASSED/$TOTAL_TESTS test cases passed. ??% line coverage achieved."
     exit 1
   fi
 
   # Extract the number of tests passed and total tests
-  TEST_PASSED=$(echo "$OUTPUT" | grep 'Tests' | awk '{print $2}')
-  TEST_RUN=$(echo "$OUTPUT" | grep 'Tests' | awk -F'[()]' '{print $2}')
-
+  TESTS_PASSED=$(echo "$OUTPUT" | grep 'Tests' | awk '{print $2}')
+  TOTAL_TESTS=$(echo "$OUTPUT" | grep 'Tests' | awk '{print $4}' | sed 's/[()]//g')
   
   # Extract line coverage percentage
   COVERAGE_PERCENT=$(echo "$OUTPUT" | grep 'All files' | awk '{print $10}')
@@ -37,7 +44,7 @@ if [ "$1" == "test" ]; then
   COVERAGE_ROUNDED=$(printf "%.0f" "$COVERAGE_PERCENT")
 
   # Output the results in the specified format
-  echo "$TEST_PASSED/$TEST_RUN test cases passed. $COVERAGE_ROUNDED% line coverage achieved."
+  echo "$TESTS_PASSED/$TOTAL_TESTS test cases passed. $COVERAGE_ROUNDED% line coverage achieved."
 
   exit 0
 fi

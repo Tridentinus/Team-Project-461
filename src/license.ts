@@ -82,7 +82,6 @@ export async function isLicenseCompatible(owner: string, name: string): Promise<
     if (spdxId) {
       logMessage('DEBUG', `SPDX ID found: ${spdxId}`);
     }
-
     // Fallback to checking LICENSE and README files
     const licenseText = data.repository.licenseFile?.text || data.repository.readme?.text || '';
     const extractedLicense = extractLicenseFromText(licenseText);

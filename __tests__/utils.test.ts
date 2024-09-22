@@ -12,6 +12,10 @@ describe('getLinkType', () => {
   it('should return "GitHub" for GitHub URLs', () => {
     expect(getLinkType('https://github.com/someuser/somerepo')).toBe('GitHub');
     expect(getLinkType('http://www.github.com/someuser/somerepo')).toBe('GitHub');
+    expect(getLinkType('git@github.com:owner/repo')).toBe('GitHub');
+    expect(getLinkType('git+ssh://git@github.com/owner/repo')).toBe('GitHub');
+    expect(getLinkType('https://github.com/owner/repo/')).toBe('GitHub');
+    expect(getLinkType('https://github.com/owner/repo.git')).toBe('GitHub');
   });
 
   it('should return "npm" for npm URLs', () => {
@@ -159,40 +163,6 @@ describe('logMessage', () => {
   });
 });
 
-
-// // Mock the file system module
-// vi.mock('fs');
-
-// describe('logMessage', () => {
-//   it('should log the correct message format', () => {
-//     // Arrange: Mock the current date and fs.appendFileSync
-//     const mockDate = new Date('2024-09-13T12:00:00Z');
-//     vi.setSystemTime(mockDate);
-//     const mockAppendFileSync = vi.spyOn(fs, 'appendFileSync');
-    
-//     const level = 'INFO';
-//     const message = 'This is a test log message';
-    
-//     // Act: Call the function
-//     logMessage(level, message);
-    
-//     // Assert: Check if fs.appendFileSync was called with the correct arguments
-//     const expectedLogEntry = `2024-09-13T12:00:00.000Z [INFO] - This is a test log message\n`;
-//     expect(mockAppendFileSync).toHaveBeenCalledWith(expect.any(String), expectedLogEntry, { flag: 'a' });
-//   });
-
-//   it('should append the message to the log file', () => {
-//     const mockAppendFileSync = vi.spyOn(fs, 'appendFileSync');
-    
-//     const level = 'ERROR';
-//     const message = 'An error occurred';
-    
-//     logMessage(level, message);
-    
-//     expect(mockAppendFileSync).toHaveBeenCalledTimes(1);
-//   });
-// });
-
 // Mock the file system module
 vi.mock('fs');
 
@@ -321,133 +291,52 @@ describe('gitHubRequest', () => {
 vi.mock("axios");
 vi.mock("./helpers");
 
-describe("npmToGitHub", () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-  it("should return repository info if GitHub repository is found", async () => {
-    // Arrange
-    const packageName = "some-package";
-    const repoUrl = "https://github.com/owner/repo";
-    const repoInfo = { owner: "owner", repo: "repo" };
-    
+describe('npmToGitHub', () => {
+  const packageName = 'example-package';
+
+  it('should return GitHub repo info when a valid npm package with a repo exists', async () => {
+    // Mocking the axios response for a valid package
     vi.mocked(axios.get).mockResolvedValueOnce({
       data: {
-        collected: {
-          metadata: {
-            links: { repository: repoUrl },
-          },
+        repository: {
+          url: 'git+https://github.com/exampleOwner/exampleRepo.git',
         },
       },
     });
 
-    // Act
     const result = await npmToGitHub(packageName);
-
-    // Assert
-    expect(result).toEqual(repoInfo);
-    expect(axios.get).toHaveBeenCalledWith(`https://api.npms.io/v2/package/${packageName}`);
+    expect(result).toEqual({ owner: 'exampleOwner', repo: 'exampleRepo' });
   });
 
-  it("should return null if no repository is found", async () => {
-    // Arrange
-    const packageName = "no-repo-package";
-    
+  it('should log an error and return null if no repository information is found', async () => {
+    // Mocking the axios response with no repository information
     vi.mocked(axios.get).mockResolvedValueOnce({
-      data: {
-        collected: {
-          metadata: {
-            links: {},
-          },
-        },
-      },
+      data: {},
     });
 
-    // Act
     const result = await npmToGitHub(packageName);
-
-    // Assert
-    expect(result).toBeNull();
-    expect(axios.get).toHaveBeenCalledWith(`https://api.npms.io/v2/package/${packageName}`);
-  });
-
-  it("should return null and log an error if the request fails", async () => {
-    // Arrange
-    const packageName = "error-package";
-    const errorMessage = "Request failed";
-    
-    vi.mocked(axios.get).mockRejectedValueOnce(new Error(errorMessage));
-
-    // Act
-    const result = await npmToGitHub(packageName);
-
-    // Assert
     expect(result).toBeNull();
   });
 
-  it("should return null if the repository link is not a GitHub link", async () => {
-    // Arrange
-    const packageName = "non-github-package";
-    const repoUrl = "https://bitbucket.org/owner/repo";
-    
-    vi.mocked(axios.get).mockResolvedValueOnce({
-      data: {
-        collected: {
-          metadata: {
-            links: { repository: repoUrl },
-          },
-        },
-      },
-    });
+  it('should handle errors from the axios request', async () => {
+    // Mocking axios to throw an error
+    vi.mocked(axios.get).mockRejectedValueOnce(new Error('Network error'));
 
-    // Act
     const result = await npmToGitHub(packageName);
-
-    // Assert
     expect(result).toBeNull();
   });
 
-  it("should return null if the repository link is missing", async () => {
-    // Arrange
-    const packageName = "no-repo-link-package";
-    
+  it('should return null for invalid GitHub URLs', async () => {
+    // Mocking the axios response for a package with an invalid repo URL
     vi.mocked(axios.get).mockResolvedValueOnce({
       data: {
-        collected: {
-          metadata: {},
+        repository: {
+          url: 'https://someotherurl.com/exampleOwner/exampleRepo.git',
         },
       },
     });
 
-    // Act
     const result = await npmToGitHub(packageName);
-
-    // Assert
     expect(result).toBeNull();
-  });
-
-  it("should return null if parseGitHubUrl returns null", async () => {
-    // Arrange
-    const packageName = "some-package";
-    const repoUrl = "https://github.com/owner/repo";
-    const repoInfo = { owner: "owner", repo: "repo" };
-    
-    vi.mocked(axios.get).mockResolvedValueOnce({
-      data: {
-        collected: {
-          metadata: {
-            links: { repository: repoUrl },
-          },
-        },
-      },
-    });
-
-    vi.spyOn(utils, "parseGitHubUrl").mockReturnValueOnce(null);
-    // Act
-    const result = await npmToGitHub(packageName);
-
-    // Assert
-    expect(result).toEqual(repoInfo);
-    expect(axios.get).toHaveBeenCalledWith(`https://api.npms.io/v2/package/${packageName}`);
   });
 });

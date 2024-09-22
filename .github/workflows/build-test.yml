@@ -26,3 +26,5 @@ jobs:
       - run: npm test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LOG_FILE: test.log
+          LOG_LEVEL: 2

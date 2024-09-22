@@ -1,3 +1,14 @@
+/**
+ * Measures the latencies of concurrent asynchronous functions.
+ *
+ * @param fns - An array of functions that each take an `owner` and `repo` string and return a Promise resolving to a number.
+ * @param owner - The owner of the repository.
+ * @param repo - The repository name.
+ * @returns A Promise that resolves to an object containing:
+ * - `latencies`: An array of latencies (in seconds) for each function.
+ * - `results`: An array of results from each function, or `null` if an error occurred.
+ * - `errors`: An array of errors from each function, or `null` if no error occurred.
+ */
 export async function measureConcurrentLatencies(
     fns: ((owner: string, repo: string) => Promise<number>)[],
     owner: string,
