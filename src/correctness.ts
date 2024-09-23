@@ -10,12 +10,35 @@ export async function cleanUp(repoDir: string): Promise<void> {
   logMessage('INFO', `Cleaning up ${repoDir}`);
   try {
     await fs.rm(repoDir, { recursive: true, force: true });
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    logMessage('INFO', 'Repository contents cleaned up successfully');
+    
+    // Retry logic: Check if directory is truly deleted
+    const maxRetries = 5;
+    const delayBetweenRetries = 500; // 0.5 seconds between retries
+    let retries = 0;
+    let dirExists = true;
+
+    while (retries < maxRetries && dirExists) {
+      try {
+        await fs.access(repoDir);
+        logMessage('INFO', `Directory still exists after removal attempt. Retrying...`);
+        await new Promise(resolve => setTimeout(resolve, delayBetweenRetries));
+      } catch {
+        // Directory doesn't exist anymore
+        dirExists = false;
+      }
+      retries++;
+    }
+
+    if (dirExists) {
+      logMessage('ERROR', `Failed to fully clean up ${repoDir} after ${maxRetries} retries`);
+    } else {
+      logMessage('INFO', 'Repository contents cleaned up successfully');
+    }
   } catch (error) {
     logMessage('ERROR', `Error cleaning up repository contents: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
+
 
 export async function ensureRepoDir(repoDir: string): Promise<void> {
   try {
