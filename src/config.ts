@@ -19,6 +19,9 @@ if (!LOG_FILE) {
   process.exitCode = 1;
 }
 
+// create empty log file if it does not exist
+fs.appendFileSync(LOG_FILE, '', { flag: "a" });
+
 // Validate the GitHub token
 try {
   const isValid = validateGitHubToken(GITHUB_TOKEN);
