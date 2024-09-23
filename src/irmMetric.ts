@@ -55,21 +55,21 @@ export async function fetchRepoIssues(owner: string, name: string) {
   
     const query = `
       query GetRepoIssues($owner: String!, $name: String!) {
-        repository(owner: $owner, name: $name) {
-          issues(first: 100, states: OPEN) {
-            edges {
-              node {
-                createdAt
-                comments(first: 1) {
-                  nodes {
-                    createdAt
-                  }
-                }
-                closedAt
-              }
+      repository(owner: $owner, name: $name) {
+        issues(first: 100, states: [OPEN, CLOSED]) {
+        edges {
+          node {
+          createdAt
+          comments(first: 1) {
+            nodes {
+            createdAt
             }
           }
+          closedAt
+          }
         }
+        }
+      }
       }
     `;
   
@@ -148,7 +148,7 @@ export function calculateIRM(issues: IssueNode[]) {
     }
   });
 
-  const averageResponseTime = issueCount > 0 ? totalResponseTime / issueCount : 0;
+  const averageResponseTime = issueCount > 0 ? totalResponseTime / issueCount : 0; //
 
   logMessage('DEBUG', `Calculated IRM (Average Issue Response Time): ${averageResponseTime} minutes`);
   
@@ -192,7 +192,7 @@ export function normalizeIRM (averageResponseTime: number, maxResponseTime: numb
  * @returns A promise that resolves to the IRM value.
  */
 export async function getIRM(owner: string, repo: string): Promise<number> {
-  const issues = await fetchRepoIssues(owner, repo);;
+  const issues = await fetchRepoIssues(owner, repo);
   return calculateIRM(issues);
   
 }
