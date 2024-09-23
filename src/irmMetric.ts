@@ -193,6 +193,10 @@ export function normalizeIRM (averageResponseTime: number, maxResponseTime: numb
  */
 export async function getIRM(owner: string, repo: string): Promise<number> {
   const issues = await fetchRepoIssues(owner, repo);
-  return calculateIRM(issues);
+
+  
+  const irmScore = calculateIRM(issues);
+  return parseFloat(irmScore.toFixed(3));
+
   
 }
