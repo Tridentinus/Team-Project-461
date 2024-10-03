@@ -122,11 +122,10 @@ export async function fetchRepoIssues(owner: string, name: string) {
  */
 export function calculateIRM(issues: IssueNode[]) {
   let totalResponseTime = 0;
-  let issueCount = 0;
 
   issues.forEach(issue => {
     const createdAt = parseISO(issue.node.createdAt);
-    let responseTime = null;
+    let responseTime = 0;
 
     // Check if there was a comment, otherwise use closedAt
     if (issue.node.comments.nodes.length > 0) {
@@ -137,18 +136,16 @@ export function calculateIRM(issues: IssueNode[]) {
       responseTime = differenceInMinutes(closedAt, createdAt);
     }
 
-    if (responseTime !== null) {
+    if (responseTime < maxResponseTime) {
       totalResponseTime += responseTime;
-      issueCount++;
     }
     //else add the maxResponseTime
-    else{
+    else {
       totalResponseTime += maxResponseTime;
-      issueCount++;
     }
   });
 
-  const averageResponseTime = issueCount > 0 ? totalResponseTime / issueCount : 0; //
+  const averageResponseTime = issues.length > 0 ? totalResponseTime / issues.length : 0; //
 
   logMessage('DEBUG', `Calculated IRM (Average Issue Response Time): ${averageResponseTime} minutes`);
   
@@ -194,9 +191,9 @@ export function normalizeIRM (averageResponseTime: number, maxResponseTime: numb
 export async function getIRM(owner: string, repo: string): Promise<number> {
   const issues = await fetchRepoIssues(owner, repo);
 
-  
   const irmScore = calculateIRM(issues);
-  return parseFloat(irmScore.toFixed(3));
 
-  
+  logMessage('INFO', `Final IRM Score: ${irmScore}`);
+
+  return parseFloat(irmScore.toFixed(3));
 }
